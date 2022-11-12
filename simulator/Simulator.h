@@ -26,10 +26,10 @@
 #define STEPS_PER_MEASUREMENT (STEPS_PER_FRAME * FRAMES_PER_MEASUREMENT)
 #define MEASUREMENTS_IN_ENERGY_PLOT 600
 
-class BoxSimulator : public ParticleBox, public QMainWindow {
+class BoxSimulator : public PersonBox, public QMainWindow {
  private:
-  QChart *particleChart = new QChart();
-  QScatterSeries *particleSeries = new QScatterSeries();
+  QChart *personChart = new QChart();
+  QScatterSeries *personSeries = new QScatterSeries();
 
   QChart *energyChart = new QChart();
   QLineSeries *kineticEnergySeries = new QLineSeries();
@@ -47,7 +47,7 @@ class BoxSimulator : public ParticleBox, public QMainWindow {
   QPushButton *bringDownBtn = new QPushButton("Bring Down");
   QPushButton *reinitBtn = new QPushButton("Re-init");
   QPushButton *exportBtn = new QPushButton("Export");
-  QLabel *statsLabel = new QLabel(QString("Particles in a box of width %1").arg(BOX_WIDTH));
+  QLabel *statsLabel = new QLabel(QString("Persons in a box of width %1").arg(BOX_WIDTH));
 
   size_t _step = 0;
   size_t _start_step = 0;
