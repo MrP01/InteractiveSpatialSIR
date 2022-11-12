@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
-  setlocale(LC_NUMERIC, "en_US.UTF-8");
+  setlocale(LC_NUMERIC, "en_UK.UTF-8");
   srand(time(NULL));
 
   BoxSimulator simulator;
