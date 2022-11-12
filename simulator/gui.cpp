@@ -1,7 +1,6 @@
-#include "Simulator.h"
 #include "Server.h"
+#include "Simulator.h"
 #include <QtCore/QCoreApplication>
-
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
@@ -15,5 +14,4 @@ int main(int argc, char **argv) {
   simulator.show();
   Server server(1234);
   return app.exec();
-  
 }

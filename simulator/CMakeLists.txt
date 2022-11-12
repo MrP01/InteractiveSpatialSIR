@@ -4,4 +4,3 @@ target_link_libraries(sir_simulator_gui PUBLIC Qt6::Widgets Qt6::Charts)
 target_link_libraries(sir_simulator_gui PUBLIC Qt::WebSockets)
 #qt_add_executable(Server Server.cpp Server.hmain.cpp)
 #target_link_libraries(Server PUBLIC Qt::WebSockets)
-
