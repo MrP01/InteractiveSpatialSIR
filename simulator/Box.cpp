@@ -7,7 +7,7 @@
 
 void PersonBox::initRandomly(double initialKineticEnergy) {
   // double approxHeight = initialGravitationalPotential / (PARTICLE_MASS * GRAVITY);
-  for (size_t i = 0; i < 200; i++) {
+  for (size_t i = 0; i < 80; i++) {
     Person person = Person();
     double closestNeighbourDist = 0;
     while (closestNeighbourDist < 0.8) {

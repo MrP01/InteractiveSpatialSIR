@@ -45,7 +45,8 @@ void Server::processMessage(const QString &message) {
   // std::cout << pSender->localPort() << " and " << pSender->peerPort() << std::endl;
   QTextStream(stdout) << "Incoming message: " << message << "\n";
   QStringList pieces = message.split(";");
-  m_simulator->people[0].setVelocity(pieces[0].toDouble(), pieces[1].toDouble());
+  size_t my_index = pSender->peerPort() % m_simulator->people.size();
+  m_simulator->people[my_index].setVelocity(pieces[0].toDouble(), pieces[1].toDouble());
   // take in position and update
 }
 //! [processMessage]
