@@ -14,4 +14,4 @@ repos:
     rev: v14.0.6
     hooks:
       - id: clang-format
-        exclude: ".json"
+        exclude: "\\.(js|json)"

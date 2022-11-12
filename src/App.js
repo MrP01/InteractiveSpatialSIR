@@ -1,6 +1,8 @@
-import logo from './logo.svg';
-import './App.css';
-import { Joystick } from 'react-joystick-component';
+import "./App.css";
+
+import { Joystick } from "react-joystick-component";
+
+import logo from "./logo.svg";
 
 const socket = new WebSocket("wss://localhost:1234");
 /*socket.onopen = (event) => {
@@ -12,7 +14,6 @@ function handleMove(event) {
 function handleStop() {
   console.log("Stop");
 }
-
 
 function App() {
   return (

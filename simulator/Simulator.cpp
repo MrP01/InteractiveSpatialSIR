@@ -33,7 +33,9 @@ void BoxSimulator::buildUI() {
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
-    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
+    energyChart->axes(Qt::Horizontal)
+        .first()
+        ->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
     energyChart->axes(Qt::Vertical).first()->setTitleText("Energy log10(E) / log10(eu)");
 
     energyView->setRenderHint(QPainter::Antialiasing);
@@ -65,7 +67,7 @@ void BoxSimulator::buildUI() {
     if (controlBtn->text() == "Start") {
       _timerId = startTimer(10);
       particleView->chart()->setAnimationOptions(QChart::NoAnimation);
-      //heightHistChart->setAnimationOptions(QChart::NoAnimation);
+      // heightHistChart->setAnimationOptions(QChart::NoAnimation);
       velocityHistChart->setAnimationOptions(QChart::NoAnimation);
       std::cout << "Resetting squared mean velocity measurement" << std::endl;
       _start_step = _step;
@@ -194,13 +196,13 @@ void BoxSimulator::measure() {
     energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
   updateHistograms();
 
-/*  double max_height = 0;
-  for (size_t i = 0; i < PARTICLES; i++)
-    max_height = std::max(max_height, positions[i][1]);*/
+  /*  double max_height = 0;
+    for (size_t i = 0; i < PARTICLES; i++)
+      max_height = std::max(max_height, positions[i][1]);*/
 
   statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3,\t E_LJ = %4 eu")
                           .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),
-                               QString::number(E_pot, 'E', 3), QString::number(E_pot_LJ, 'E', 3)));
+                              QString::number(E_pot, 'E', 3), QString::number(E_pot_LJ, 'E', 3)));
 }
 
 void BoxSimulator::step() {

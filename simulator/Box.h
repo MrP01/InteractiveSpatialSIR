@@ -10,7 +10,7 @@
 #define PARTICLE_MASS 1.0          // mass of a particle
 #define LJ_CUTOFF_DISTANCE 0.1     // LJ explodes for very close particles, stop earlier
 #define BOX_WIDTH 16 * LJ_SIGMA    // width of the infinitely high box
-#define GRAVITY 8.532e1          // 9.81 m/s², actual value in reduced units: 8.532e-05
+#define GRAVITY 8.532e1            // 9.81 m/s², actual value in reduced units: 8.532e-05
 #define TAU 8.0e-4                 // time step
 #define HEIGHT_HISTOGRAM_BINS 16   // into how many height boxes we aggregate particles
 #define VELOCITY_HISTOGRAM_BINS 16 // similarly, number of bins for the velocity histogram

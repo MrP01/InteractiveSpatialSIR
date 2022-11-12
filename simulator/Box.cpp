@@ -91,9 +91,7 @@ double ParticleBox::getKineticEnergy() {
     energy += square(velocities[i][0]) + square(velocities[i][1]);
   return PARTICLE_MASS / 2 * energy;
 }
-double ParticleBox::getGravitationalPotential() {
-  return PARTICLE_MASS * GRAVITY ;
-}
+double ParticleBox::getGravitationalPotential() { return PARTICLE_MASS * GRAVITY; }
 double ParticleBox::getLJPotential() {
   double energy = 0;
   for (size_t i = 0; i < PARTICLES; i++) {
