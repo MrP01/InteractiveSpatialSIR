@@ -4,7 +4,7 @@ void BoxSimulator::buildUI() {
   QChartView *particleView = new QChartView(this);
   {
     particleSeries->setName("Particles");
-    renderParticles();
+    renderPeople();
 
     particleChart->setTitle("Particle Box");
     particleChart->addSeries(particleSeries);
@@ -23,11 +23,9 @@ void BoxSimulator::buildUI() {
   {
     kineticEnergySeries->setName("Kinetic Energy");
     potentialEnergySeries->setName("Gravitational Potential");
-    LJpotentialEnergySeries->setName("LJ Potential");
     totalEnergySeries->setName("Total Energy");
     energyChart->addSeries(kineticEnergySeries);
     energyChart->addSeries(potentialEnergySeries);
-    energyChart->addSeries(LJpotentialEnergySeries);
     energyChart->addSeries(totalEnergySeries);
     energyChart->setTitle("Energy development");
     energyChart->createDefaultAxes();
@@ -82,28 +80,28 @@ void BoxSimulator::buildUI() {
     }
   });
   connect(liftBtn, &QPushButton::clicked, [=]() {
-    for (size_t i = 0; i < PARTICLES; i++)
+    for (size_t i = 0; i < POPULATION_SIZE; i++)
       people[i].position[1] += PLOT_HEIGHT / 3;
-    renderParticles();
+    renderPeople();
     measure();
   });
   connect(slowDownBtn, &QPushButton::clicked, [=]() {
-    for (size_t i = 0; i < PARTICLES; i++) {
+    for (size_t i = 0; i < POPULATION_SIZE; i++) {
       people[i].velocity[0] = pow(abs(people[i].velocity[0]), 0.3);
       people[i].velocity[1] = pow(abs(people[i].velocity[1]), 0.3);
     }
     measure();
   });
   connect(bringDownBtn, &QPushButton::clicked, [=]() {
-    for (size_t i = 0; i < PARTICLES; i++)
+    for (size_t i = 0; i < POPULATION_SIZE; i++)
       if (people[i].position[1] > PLOT_HEIGHT * 0.8)
         people[i].position[1] = pow(abs(people[i].position[1]), 0.6);
-    renderParticles();
+    renderPeople();
     measure();
   });
   connect(reinitBtn, &QPushButton::clicked, [=]() {
     initRandomly(10, PLOT_HEIGHT * GRAVITY * PARTICLE_MASS);
-    renderParticles();
+    renderPeople();
     measure();
   });
   connect(exportBtn, &QPushButton::clicked, [=]() { exportToCSV(); });
@@ -162,9 +160,9 @@ void BoxSimulator::buildUI() {
   QObject::connect(closeShortcut, &QShortcut::activated, this, [=]() { close(); });
 }
 
-void BoxSimulator::renderParticles() {
+void BoxSimulator::renderPeople() {
   particleSeries->clear();
-  for (size_t i = 0; i < PARTICLES; i++)
+  for (size_t i = 0; i < POPULATION_SIZE; i++)
     *particleSeries << QPointF(people[i].position[0], people[i].position[1]);
 }
 
@@ -181,8 +179,7 @@ void BoxSimulator::updateHistograms() {
 void BoxSimulator::measure() {
   double E_kin = getKineticEnergy();
   double E_pot = getGravitationalPotential();
-  double E_pot_LJ = getLJPotential();
-  double E_total = E_kin + E_pot + E_pot_LJ;
+  double E_total = E_kin + E_pot;
 
   _energyMax = std::max(_energyMax, E_total);
   energyChart->axes(Qt::Vertical).first()->setRange(0, log10(_energyMax) + 1.5);
@@ -190,24 +187,20 @@ void BoxSimulator::measure() {
   double measurement = _step / STEPS_PER_MEASUREMENT;
   *kineticEnergySeries << QPointF(measurement, log10(E_kin));
   *potentialEnergySeries << QPointF(measurement, log10(E_pot));
-  *LJpotentialEnergySeries << QPointF(measurement, log10(E_pot_LJ));
+  // *LJpotentialEnergySeries << QPointF(measurement, log10(E_pot_LJ));
   *totalEnergySeries << QPointF(measurement, log10(E_total));
   if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
     energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
   updateHistograms();
 
-  /*  double max_height = 0;
-    for (size_t i = 0; i < PARTICLES; i++)
-      max_height = std::max(max_height, people[i].position[1]);*/
-
-  statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3,\t E_LJ = %4 eu")
+  statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3")
                           .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),
-                              QString::number(E_pot, 'E', 3), QString::number(E_pot_LJ, 'E', 3)));
+                              QString::number(E_pot, 'E', 3)));
 }
 
 void BoxSimulator::step() {
   simulate(STEPS_PER_FRAME);
-  renderParticles();
+  renderPeople();
   _step += STEPS_PER_FRAME;
 
   if (_step % STEPS_PER_MEASUREMENT == 0)

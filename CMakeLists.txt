@@ -14,7 +14,10 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Charts)
 find_package(Qt6 REQUIRED COMPONENTS WebSockets)
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 220960703645157e9bfab054d1805f338a38cf7d
 
 add_subdirectory(simulator/)
