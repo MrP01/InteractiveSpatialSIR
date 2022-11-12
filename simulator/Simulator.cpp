@@ -3,15 +3,19 @@
 void BoxSimulator::buildUI() {
   QChartView *personView = new QChartView(this);
   {
-    personSeries->setName("Persons");
+    healthySeries->setName("Healthy");
+    infectedSeries->setName("Infected");
+    infectedSeries->setColor(Qt::red);
     renderPeople();
+    connect(healthySeries, &QScatterSeries::clicked, this, &BoxSimulator::infectPerson);
 
     personChart->setTitle("Person Box");
-    personChart->addSeries(personSeries);
+    personChart->addSeries(healthySeries);
+    personChart->addSeries(infectedSeries);
     personChart->createDefaultAxes();
     personChart->axes(Qt::Horizontal).first()->setRange(0, BOX_WIDTH);
     personChart->axes(Qt::Vertical).first()->setRange(0, PLOT_HEIGHT);
-    personChart->setAnimationOptions(QChart::SeriesAnimations);
+    personChart->setAnimationOptions(QChart::NoAnimation);
     personView->setRenderHint(QPainter::Antialiasing);
     personView->setChart(personChart);
     QSizePolicy policy = personView->sizePolicy();
@@ -64,8 +68,7 @@ void BoxSimulator::buildUI() {
   connect(controlBtn, &QPushButton::clicked, [=]() {
     if (controlBtn->text() == "Start") {
       _timerId = startTimer(10);
-      personView->chart()->setAnimationOptions(QChart::NoAnimation);
-      // heightHistChart->setAnimationOptions(QChart::NoAnimation);
+      // personView->chart()->setAnimationOptions(QChart::NoAnimation);
       velocityHistChart->setAnimationOptions(QChart::NoAnimation);
       std::cout << "Resetting squared mean velocity measurement" << std::endl;
       _start_step = _step;
@@ -75,7 +78,7 @@ void BoxSimulator::buildUI() {
       killTimer(_timerId);
       double meanVel = totalMeanVelocity / ((_step - _start_step) * TAU);
       std::cout << "Squared Mean velocity result: " << meanVel << std::endl;
-      std::cout << "k_B * T / m = " << meanVel / 2 << std::endl;
+      // std::cout << "k_B * T / m = " << meanVel / 2 << std::endl;
       controlBtn->setText("Start");
     }
   });
@@ -161,9 +164,13 @@ void BoxSimulator::buildUI() {
 }
 
 void BoxSimulator::renderPeople() {
-  personSeries->clear();
+  healthySeries->clear();
+  infectedSeries->clear();
   for (size_t i = 0; i < POPULATION_SIZE; i++)
-    *personSeries << QPointF(people[i].position[0], people[i].position[1]);
+    if (people[i].state == HEALTHY)
+      *healthySeries << QPointF(people[i].position[0], people[i].position[1]);
+    else
+      *infectedSeries << QPointF(people[i].position[0], people[i].position[1]);
 }
 
 void BoxSimulator::updateHistograms() {
@@ -212,4 +219,19 @@ void BoxSimulator::setTheme(QChart::ChartTheme theme) {
   energyChart->setTheme(theme);
   velocityHistChart->setTheme(theme);
   personChart->setTheme(theme);
-};
+}
+
+void BoxSimulator::infectPerson(const QPointF &point) {
+  personChart->setAnimationOptions(QChart::NoAnimation);
+  std::cout << point.x() << ", " << point.y() << std::endl;
+  for (size_t i = 0; i < POPULATION_SIZE; i++) {
+    if (abs(people[i].position[0] - point.x()) < 1e-6 && abs(people[i].position[1] - point.y()) < 1e-6) {
+      std::cout << "Found: " << people[i].position[0] << ", " << people[i].position[1] << std::endl;
+      people[i].state = State::INFECTED;
+      break;
+    }
+  }
+  // QTimer *timer = new QTimer(this);
+  // connect(timer, &QTimer::timeout, [=] { renderPeople(); });
+  // timer->start(100);
+}

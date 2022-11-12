@@ -29,7 +29,8 @@
 class BoxSimulator : public PersonBox, public QMainWindow {
  private:
   QChart *personChart = new QChart();
-  QScatterSeries *personSeries = new QScatterSeries();
+  QScatterSeries *healthySeries = new QScatterSeries();
+  QScatterSeries *infectedSeries = new QScatterSeries();
 
   QChart *energyChart = new QChart();
   QLineSeries *kineticEnergySeries = new QLineSeries();
@@ -58,6 +59,7 @@ class BoxSimulator : public PersonBox, public QMainWindow {
   void measure();
   void step();
   void timerEvent(QTimerEvent *event);
+  void infectPerson(const QPointF &point);
 
   // very important:
   void setTheme(QChart::ChartTheme theme);
