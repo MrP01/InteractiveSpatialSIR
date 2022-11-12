@@ -1,3 +1,4 @@
+#include "Person.h"
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -32,13 +33,12 @@ struct VelocityHistogram {
 
 class ParticleBox {
  protected:
-  double positions[PARTICLES][2];
-  double velocities[PARTICLES][2];
+  Person people[PARTICLES];
   struct VelocityHistogram velocityHist;
   double totalMeanVelocity = 0;
 
   double distanceBetween(size_t i, size_t j) {
-    return std::hypot(positions[i][0] - positions[j][0], positions[i][1] - positions[j][1]);
+    return std::hypot(people[i].position[0] - people[j].position[0], people[i].position[1] - people[j].position[1]);
   }
 
  public:

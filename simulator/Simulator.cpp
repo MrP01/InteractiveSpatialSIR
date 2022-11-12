@@ -83,21 +83,21 @@ void BoxSimulator::buildUI() {
   });
   connect(liftBtn, &QPushButton::clicked, [=]() {
     for (size_t i = 0; i < PARTICLES; i++)
-      positions[i][1] += PLOT_HEIGHT / 3;
+      people[i].position[1] += PLOT_HEIGHT / 3;
     renderParticles();
     measure();
   });
   connect(slowDownBtn, &QPushButton::clicked, [=]() {
     for (size_t i = 0; i < PARTICLES; i++) {
-      velocities[i][0] = pow(abs(velocities[i][0]), 0.3);
-      velocities[i][1] = pow(abs(velocities[i][1]), 0.3);
+      people[i].velocity[0] = pow(abs(people[i].velocity[0]), 0.3);
+      people[i].velocity[1] = pow(abs(people[i].velocity[1]), 0.3);
     }
     measure();
   });
   connect(bringDownBtn, &QPushButton::clicked, [=]() {
     for (size_t i = 0; i < PARTICLES; i++)
-      if (positions[i][1] > PLOT_HEIGHT * 0.8)
-        positions[i][1] = pow(abs(positions[i][1]), 0.6);
+      if (people[i].position[1] > PLOT_HEIGHT * 0.8)
+        people[i].position[1] = pow(abs(people[i].position[1]), 0.6);
     renderParticles();
     measure();
   });
@@ -165,7 +165,7 @@ void BoxSimulator::buildUI() {
 void BoxSimulator::renderParticles() {
   particleSeries->clear();
   for (size_t i = 0; i < PARTICLES; i++)
-    *particleSeries << QPointF(positions[i][0], positions[i][1]);
+    *particleSeries << QPointF(people[i].position[0], people[i].position[1]);
 }
 
 void BoxSimulator::updateHistograms() {
@@ -198,7 +198,7 @@ void BoxSimulator::measure() {
 
   /*  double max_height = 0;
     for (size_t i = 0; i < PARTICLES; i++)
-      max_height = std::max(max_height, positions[i][1]);*/
+      max_height = std::max(max_height, people[i].position[1]);*/
 
   statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3,\t E_LJ = %4 eu")
                           .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),

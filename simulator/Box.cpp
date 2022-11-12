@@ -10,17 +10,15 @@ void ParticleBox::initRandomly(double initialKineticEnergy, double initialGravit
   for (size_t i = 0; i < PARTICLES; i++) {
     double closestNeighbourDist = 0;
     while (closestNeighbourDist < 0.8 * LJ_SIGMA) {
-      positions[i][0] = ((double)rand() / RAND_MAX) * BOX_WIDTH;
-      positions[i][1] = ((double)rand() / RAND_MAX) * approxHeight;
+      people[i].setPosition(((double)rand() / RAND_MAX) * BOX_WIDTH, ((double)rand() / RAND_MAX) * approxHeight);
       closestNeighbourDist = LJ_SIGMA;
       for (size_t j = 0; j < i; j++)
         closestNeighbourDist = std::min(closestNeighbourDist, distanceBetween(i, j));
       std::cout << "." << std::flush;
     }
 
-    std::cout << "Init particle at " << positions[i][0] << ", " << positions[i][1] << std::endl;
-    velocities[i][0] = ((double)rand() / RAND_MAX) - 0.5;
-    velocities[i][1] = ((double)rand() / RAND_MAX) - 0.5;
+    std::cout << "Init particle at " << people[i].position[0] << ", " << people[i].position[1] << std::endl;
+    people[i].setVelocity(((double)rand() / RAND_MAX) - 0.5, ((double)rand() / RAND_MAX) - 0.5);
   }
 }
 
@@ -30,7 +28,7 @@ void ParticleBox::f(ParticleVectors &accelerations) {
     for (size_t j = 0; j < PARTICLES; j++) {
       if (i == j)
         continue;
-      double dx = positions[i][0] - positions[j][0], dy = positions[i][1] - positions[j][1];
+      double dx = people[i].position[0] - people[j].position[0], dy = people[i].position[1] - people[j].position[1];
       double r_squared = dx * dx + dy * dy;
       if (r_squared < LJ_CUT_DIST_SQ)
         r_squared = LJ_CUT_DIST_SQ;
@@ -52,16 +50,16 @@ void ParticleBox::simulate(size_t timesteps) {
     ParticleVectors before_accelerations = after_accelerations;
     memcpy(before_accelerations, after_accelerations, PARTICLES * 2 * sizeof(double));
     for (size_t i = 0; i < PARTICLES; i++) {
-      positions[i][0] += TAU * velocities[i][0] + square(TAU) / 2 * before_accelerations[i][0];
-      positions[i][1] += TAU * velocities[i][1] + square(TAU) / 2 * before_accelerations[i][1];
+      people[i].position[0] += TAU * people[i].velocity[0] + square(TAU) / 2 * before_accelerations[i][0];
+      people[i].position[1] += TAU * people[i].velocity[1] + square(TAU) / 2 * before_accelerations[i][1];
     }
 
     f(after_accelerations);
     double totalVelocity = 0;
     for (size_t i = 0; i < PARTICLES; i++) {
-      velocities[i][0] += TAU / 2 * (before_accelerations[i][0] + after_accelerations[i][0]);
-      velocities[i][1] += TAU / 2 * (before_accelerations[i][1] + after_accelerations[i][1]);
-      totalVelocity += square(velocities[i][0]) + square(velocities[i][1]);
+      people[i].velocity[0] += TAU / 2 * (before_accelerations[i][0] + after_accelerations[i][0]);
+      people[i].velocity[1] += TAU / 2 * (before_accelerations[i][1] + after_accelerations[i][1]);
+      totalVelocity += square(people[i].velocity[0]) + square(people[i].velocity[1]);
     }
     totalMeanVelocity += totalVelocity / PARTICLES;
     reflectParticles();
@@ -71,16 +69,16 @@ void ParticleBox::simulate(size_t timesteps) {
 
 void ParticleBox::reflectParticles() {
   for (size_t i = 0; i < PARTICLES; i++) {
-    if (positions[i][0] < 0) {
-      positions[i][0] = -positions[i][0]; // assumes linear movement in this timestep
-      velocities[i][0] = -velocities[i][0];
-    } else if (positions[i][0] > BOX_WIDTH) {
-      positions[i][0] = BOX_WIDTH - (positions[i][0] - BOX_WIDTH); // assumes linear movement
-      velocities[i][0] = -velocities[i][0];
+    if (people[i].position[0] < 0) {
+      people[i].position[0] = -people[i].position[0]; // assumes linear movement in this timestep
+      people[i].velocity[0] = -people[i].velocity[0];
+    } else if (people[i].position[0] > BOX_WIDTH) {
+      people[i].position[0] = BOX_WIDTH - (people[i].position[0] - BOX_WIDTH); // assumes linear movement
+      people[i].velocity[0] = -people[i].velocity[0];
     }
-    if (positions[i][1] < 0) {
-      positions[i][1] = -positions[i][1]; // assumes linear movement
-      velocities[i][1] = -velocities[i][1];
+    if (people[i].position[1] < 0) {
+      people[i].position[1] = -people[i].position[1]; // assumes linear movement
+      people[i].velocity[1] = -people[i].velocity[1];
     }
   }
 }
@@ -88,7 +86,7 @@ void ParticleBox::reflectParticles() {
 double ParticleBox::getKineticEnergy() {
   double energy = 0;
   for (size_t i = 0; i < PARTICLES; i++)
-    energy += square(velocities[i][0]) + square(velocities[i][1]);
+    energy += square(people[i].velocity[0]) + square(people[i].velocity[1]);
   return PARTICLE_MASS / 2 * energy;
 }
 double ParticleBox::getGravitationalPotential() { return PARTICLE_MASS * GRAVITY; }
@@ -98,7 +96,7 @@ double ParticleBox::getLJPotential() {
     for (size_t j = 0; j < PARTICLES; j++) {
       if (i == j)
         continue;
-      double dx = positions[i][0] - positions[j][0], dy = positions[i][1] - positions[j][1];
+      double dx = people[i].position[0] - people[j].position[0], dy = people[i].position[1] - people[j].position[1];
       double r_squared = dx * dx + dy * dy;
       if (r_squared < LJ_CUT_DIST_SQ)
         r_squared = LJ_CUT_DIST_SQ;
@@ -113,7 +111,7 @@ double ParticleBox::getTotalEnergy() { return getKineticEnergy() + getGravitatio
 void ParticleBox::computeVelocityHistogram() {
   std::array<double, PARTICLES> values;
   for (size_t i = 0; i < PARTICLES; i++)
-    values[i] = sqrt(square(velocities[i][0]) + square(velocities[i][1]));
+    values[i] = sqrt(square(people[i].velocity[0]) + square(people[i].velocity[1]));
   const auto [_min, _max] = std::minmax_element(values.begin(), values.end());
   velocityHist.min = *_min;
   velocityHist.max = *_max;
@@ -133,10 +131,10 @@ void ParticleBox::computeVelocityHistogram() {
 void ParticleBox::exportToCSV() {
   std::ofstream positionsCsv("/tmp/positions.csv");
   for (size_t i = 0; i < PARTICLES; i++)
-    positionsCsv << positions[i][0] << ", " << positions[i][1] << "\n";
+    positionsCsv << people[i].position[0] << ", " << people[i].position[1] << "\n";
   positionsCsv.close();
   std::ofstream velocitiesCsv("/tmp/velocities.csv");
   for (size_t i = 0; i < PARTICLES; i++)
-    velocitiesCsv << velocities[i][0] << ", " << velocities[i][1] << "\n";
+    velocitiesCsv << people[i].velocity[0] << ", " << people[i].velocity[1] << "\n";
   velocitiesCsv.close();
 }
