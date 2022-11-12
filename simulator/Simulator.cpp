@@ -33,9 +33,7 @@ void BoxSimulator::buildUI() {
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
-    energyChart->axes(Qt::Horizontal)
-        .first()
-        ->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
+    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
     energyChart->axes(Qt::Vertical).first()->setTitleText("Energy log10(E) / log10(eu)");
 
     energyView->setRenderHint(QPainter::Antialiasing);
