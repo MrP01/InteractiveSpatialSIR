@@ -1,5 +1,3 @@
-// Copyright (C) 2016 Kurt Pattyn <pattyn.kurt@gmail.com>.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 #include "Server.h"
 #include <stdio.h>
 
@@ -50,7 +48,7 @@ void Server::processMessage(const QString &message) {
   m_simulator->people[0].setVelocity(pieces[0].toDouble(), pieces[1].toDouble());
   // take in position and update
 }
-//! [processMessage]w
+//! [processMessage]
 
 //! [socketDisconnected]
 void Server::socketDisconnected() {
