@@ -1,4 +1,3 @@
-#include <QtCore/QCoreApplication>
 
 #include "Server.h"
 

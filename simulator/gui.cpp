@@ -1,4 +1,7 @@
 #include "Simulator.h"
+#include "Server.h"
+#include <QtCore/QCoreApplication>
+
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
@@ -10,5 +13,7 @@ int main(int argc, char **argv) {
   simulator.buildUI();
   simulator.resize(1380, 892);
   simulator.show();
+  Server server(1234);
   return app.exec();
+  
 }
