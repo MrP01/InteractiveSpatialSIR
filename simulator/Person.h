@@ -8,4 +8,4 @@ class Person {
   double position[2];
   double velocity[2];
   enum State state = HEALTHY;
-}
+};

@@ -4,10 +4,11 @@ import { Joystick } from "react-joystick-component";
 
 import logo from "./logo.svg";
 
-const socket = new WebSocket("wss://localhost:1234");
+//const socket = new WebSocket("wss://localhost:1234");
 /*socket.onopen = (event) => {
   socket.send("uhhh random");
 };*/
+
 function handleMove(event) {
   console.log("Move", event);
 }
@@ -21,6 +22,13 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>Test!</h1>
+        <form>
+          <label>
+            Name:
+            <input type="text" name="name" />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
         <Joystick size={100} baseColor="black" stickColor="blue" move={handleMove} stop={handleStop}></Joystick>
       </header>
     </div>
