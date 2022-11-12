@@ -33,9 +33,7 @@ void BoxSimulator::buildUI() {
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
-    energyChart->axes(Qt::Horizontal)
-        .first()
-        ->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
+    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
     energyChart->axes(Qt::Vertical).first()->setTitleText("Energy log10(E) / log10(eu)");
 
     energyView->setRenderHint(QPainter::Antialiasing);
@@ -227,9 +225,8 @@ void BoxSimulator::measure() {
     max_height = std::max(max_height, positions[i][1]);
 
   statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3,\t E_LJ = %4 eu,\t max(h) = %5")
-                          .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),
-                               QString::number(E_pot, 'E', 3), QString::number(E_pot_LJ, 'E', 3),
-                               QString::number(max_height, 'g', 4)));
+                          .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3), QString::number(E_pot, 'E', 3),
+                               QString::number(E_pot_LJ, 'E', 3), QString::number(max_height, 'g', 4)));
 }
 
 void BoxSimulator::step() {
