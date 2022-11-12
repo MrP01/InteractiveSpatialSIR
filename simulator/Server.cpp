@@ -58,9 +58,10 @@ void Server::processMessage(const QString &message)
 {
     QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
     QStringList pieces = message.split(" ");
+    QTextStream(stdout) << "Got a message!\n";
     //take in position and update
 }
-//! [processMessage]w
+//! [processMessage]
 
 //! [socketDisconnected]
 void Server::socketDisconnected()
