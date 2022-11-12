@@ -1,5 +1,4 @@
 #include "Clients.h"
-
 #include <QtWebSockets>
 #include <QtCore>
 
@@ -55,7 +54,8 @@ void Server::onNewConnection()
 void Server::process(const QString &message)
 {
     QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
-    update()
+    //process message and update location here
+    //update()
 }
 //! [processMessage]
 

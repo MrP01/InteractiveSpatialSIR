@@ -1,7 +1,5 @@
-// Copyright (C) 2016 Kurt Pattyn <pattyn.kurt@gmail.com>.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
-#ifndef Server_H_H
-#define Server_H_H
+#ifndef Server
+#define Server
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
@@ -14,8 +12,8 @@ class Server: public QObject
 {
     Q_OBJECT
 public:
-    explicit Server_H(quint16 port, QObject *parent = nullptr);
-    ~Server_H() override;
+    explicit Server(quint16 port, QObject *parent = nullptr);
+    ~Server() override;
 
 private slots:
     void onNewConnection();
@@ -27,4 +25,4 @@ private:
     QList<QWebSocket *> m_clients;
 };
 
-#endif //Server_H_H
+#endif
