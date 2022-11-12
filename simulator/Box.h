@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 // be careful to set numeric values as floats here
-#define POPULATION_SIZE 200        // number of particles
-#define PARTICLE_MASS 1.0          // mass of a particle
+#define POPULATION_SIZE 200        // number of persons
+#define PARTICLE_MASS 1.0          // mass of a person
 #define BOX_WIDTH 16               // width of the infinitely high box
 #define PLOT_HEIGHT 30             // height of the plot
 #define GRAVITY 8.532e1            // 9.81 m/s², actual value in reduced units: 8.532e-05
@@ -27,7 +27,7 @@ struct VelocityHistogram {
   size_t maxHeight = 1;
 };
 
-class ParticleBox {
+class PersonBox {
  protected:
   Person people[POPULATION_SIZE];
   struct VelocityHistogram velocityHist;
@@ -38,11 +38,11 @@ class ParticleBox {
   }
 
  public:
-  ParticleBox() = default;
+  PersonBox() = default;
   void initRandomly(double initialKineticEnergy, double initialGravitationalPotential);
   void simulate(size_t timesteps);
   void f(PersonVectors &accelerations);
-  void reflectParticles();
+  void reflectPersons();
   double getKineticEnergy();
   double getGravitationalPotential();
   double getLJPotential();

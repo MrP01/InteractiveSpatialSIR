@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string.h>
 
-void ParticleBox::initRandomly(double initialKineticEnergy, double initialGravitationalPotential) {
+void PersonBox::initRandomly(double initialKineticEnergy, double initialGravitationalPotential) {
   double approxHeight = initialGravitationalPotential / (PARTICLE_MASS * GRAVITY);
   for (size_t i = 0; i < POPULATION_SIZE; i++) {
     double closestNeighbourDist = 0;
@@ -17,19 +17,19 @@ void ParticleBox::initRandomly(double initialKineticEnergy, double initialGravit
       std::cout << "." << std::flush;
     }
 
-    std::cout << "Init particle at " << people[i].position[0] << ", " << people[i].position[1] << std::endl;
+    std::cout << "Init person at " << people[i].position[0] << ", " << people[i].position[1] << std::endl;
     people[i].setVelocity(((double)rand() / RAND_MAX) - 0.5, ((double)rand() / RAND_MAX) - 0.5);
   }
 }
 
-void ParticleBox::f(PersonVectors &accelerations) {
+void PersonBox::f(PersonVectors &accelerations) {
   for (size_t i = 0; i < POPULATION_SIZE; i++) {
     accelerations[i][0] = 0;
     accelerations[i][1] = 0;
   }
 }
 
-void ParticleBox::simulate(size_t timesteps) {
+void PersonBox::simulate(size_t timesteps) {
   double after_accelerations[POPULATION_SIZE][2];
   f(after_accelerations);
   for (size_t t = 0; t < timesteps; t++) {
@@ -48,12 +48,12 @@ void ParticleBox::simulate(size_t timesteps) {
       totalVelocity += square(people[i].velocity[0]) + square(people[i].velocity[1]);
     }
     totalMeanVelocity += totalVelocity / POPULATION_SIZE;
-    reflectParticles();
+    reflectPersons();
     // time += TIME_STEP
   }
 }
 
-void ParticleBox::reflectParticles() {
+void PersonBox::reflectPersons() {
   for (size_t i = 0; i < POPULATION_SIZE; i++) {
     if (people[i].position[0] < 0) {
       people[i].position[0] = -people[i].position[0]; // assumes linear movement in this timestep
@@ -69,16 +69,16 @@ void ParticleBox::reflectParticles() {
   }
 }
 
-double ParticleBox::getKineticEnergy() {
+double PersonBox::getKineticEnergy() {
   double energy = 0;
   for (size_t i = 0; i < POPULATION_SIZE; i++)
     energy += square(people[i].velocity[0]) + square(people[i].velocity[1]);
   return PARTICLE_MASS / 2 * energy;
 }
-double ParticleBox::getGravitationalPotential() { return PARTICLE_MASS * GRAVITY; }
-double ParticleBox::getTotalEnergy() { return getKineticEnergy() + getGravitationalPotential(); }
+double PersonBox::getGravitationalPotential() { return PARTICLE_MASS * GRAVITY; }
+double PersonBox::getTotalEnergy() { return getKineticEnergy() + getGravitationalPotential(); }
 
-void ParticleBox::computeVelocityHistogram() {
+void PersonBox::computeVelocityHistogram() {
   std::array<double, POPULATION_SIZE> values;
   for (size_t i = 0; i < POPULATION_SIZE; i++)
     values[i] = sqrt(square(people[i].velocity[0]) + square(people[i].velocity[1]));
@@ -98,7 +98,7 @@ void ParticleBox::computeVelocityHistogram() {
     velocityHist.maxHeight = std::max(velocityHist.maxHeight, velocityHist.heights[bin]);
 }
 
-void ParticleBox::exportToCSV() {
+void PersonBox::exportToCSV() {
   std::ofstream positionsCsv("/tmp/positions.csv");
   for (size_t i = 0; i < POPULATION_SIZE; i++)
     positionsCsv << people[i].position[0] << ", " << people[i].position[1] << "\n";

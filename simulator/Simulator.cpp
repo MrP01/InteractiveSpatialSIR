@@ -1,22 +1,22 @@
 #include "Simulator.h"
 
 void BoxSimulator::buildUI() {
-  QChartView *particleView = new QChartView(this);
+  QChartView *personView = new QChartView(this);
   {
-    particleSeries->setName("Particles");
+    personSeries->setName("Persons");
     renderPeople();
 
-    particleChart->setTitle("Particle Box");
-    particleChart->addSeries(particleSeries);
-    particleChart->createDefaultAxes();
-    particleChart->axes(Qt::Horizontal).first()->setRange(0, BOX_WIDTH);
-    particleChart->axes(Qt::Vertical).first()->setRange(0, PLOT_HEIGHT);
-    particleChart->setAnimationOptions(QChart::SeriesAnimations);
-    particleView->setRenderHint(QPainter::Antialiasing);
-    particleView->setChart(particleChart);
-    QSizePolicy policy = particleView->sizePolicy();
+    personChart->setTitle("Person Box");
+    personChart->addSeries(personSeries);
+    personChart->createDefaultAxes();
+    personChart->axes(Qt::Horizontal).first()->setRange(0, BOX_WIDTH);
+    personChart->axes(Qt::Vertical).first()->setRange(0, PLOT_HEIGHT);
+    personChart->setAnimationOptions(QChart::SeriesAnimations);
+    personView->setRenderHint(QPainter::Antialiasing);
+    personView->setChart(personChart);
+    QSizePolicy policy = personView->sizePolicy();
     policy.setHorizontalStretch(2);
-    particleView->setSizePolicy(policy);
+    personView->setSizePolicy(policy);
   }
 
   QChartView *energyView = new QChartView(this);
@@ -64,7 +64,7 @@ void BoxSimulator::buildUI() {
   connect(controlBtn, &QPushButton::clicked, [=]() {
     if (controlBtn->text() == "Start") {
       _timerId = startTimer(10);
-      particleView->chart()->setAnimationOptions(QChart::NoAnimation);
+      personView->chart()->setAnimationOptions(QChart::NoAnimation);
       // heightHistChart->setAnimationOptions(QChart::NoAnimation);
       velocityHistChart->setAnimationOptions(QChart::NoAnimation);
       std::cout << "Resetting squared mean velocity measurement" << std::endl;
@@ -137,7 +137,7 @@ void BoxSimulator::buildUI() {
 
   auto mainWidget = new QWidget(this);
   auto mainLayout = new QGridLayout(mainWidget);
-  mainLayout->addWidget(particleView, 0, 0);
+  mainLayout->addWidget(personView, 0, 0);
   auto rightChartLayout = new QVBoxLayout();
   rightChartLayout->addWidget(energyView);
   rightChartLayout->addWidget(velocityHistView);
@@ -154,20 +154,19 @@ void BoxSimulator::buildUI() {
   buttonLayout->addWidget(themeBox);
   mainLayout->addLayout(buttonLayout, 2, 0, 1, 3);
   setCentralWidget(mainWidget);
-  setWindowTitle("Particle Box Simulator");
+  setWindowTitle("Person Box Simulator");
 
   QShortcut *closeShortcut = new QShortcut(Qt::CTRL | Qt::Key_W, this);
   QObject::connect(closeShortcut, &QShortcut::activated, this, [=]() { close(); });
 }
 
 void BoxSimulator::renderPeople() {
-  particleSeries->clear();
+  personSeries->clear();
   for (size_t i = 0; i < POPULATION_SIZE; i++)
-    *particleSeries << QPointF(people[i].position[0], people[i].position[1]);
+    *personSeries << QPointF(people[i].position[0], people[i].position[1]);
 }
 
 void BoxSimulator::updateHistograms() {
-
   computeVelocityHistogram();
   velocityHistChart->axes(Qt::Horizontal).first()->setRange(velocityHist.min, velocityHist.max);
   velocityHistChart->axes(Qt::Vertical).first()->setRange(0, (double)velocityHist.maxHeight);
@@ -212,5 +211,5 @@ void BoxSimulator::timerEvent(QTimerEvent *event) { step(); }
 void BoxSimulator::setTheme(QChart::ChartTheme theme) {
   energyChart->setTheme(theme);
   velocityHistChart->setTheme(theme);
-  particleChart->setTheme(theme);
+  personChart->setTheme(theme);
 };
