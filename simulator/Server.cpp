@@ -57,9 +57,10 @@ void Server::onNewConnection()
 void Server::processMessage(const QString &message)
 {
     QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
+    QStringList pieces = message.split(" ");
     //take in position and update
 }
-//! [processMessage]
+//! [processMessage]w
 
 //! [socketDisconnected]
 void Server::socketDisconnected()
