@@ -14,7 +14,7 @@ void BoxSimulator::buildUI() {
     personChart->addSeries(infectedSeries);
     personChart->createDefaultAxes();
     personChart->axes(Qt::Horizontal).first()->setRange(0, BOX_WIDTH);
-    personChart->axes(Qt::Vertical).first()->setRange(0, PLOT_HEIGHT);
+    personChart->axes(Qt::Vertical).first()->setRange(0, BOX_HEIGHT);
     personChart->setAnimationOptions(QChart::NoAnimation);
     personView->setRenderHint(QPainter::Antialiasing);
     personView->setChart(personChart);
@@ -83,27 +83,27 @@ void BoxSimulator::buildUI() {
     }
   });
   connect(liftBtn, &QPushButton::clicked, [=]() {
-    for (size_t i = 0; i < POPULATION_SIZE; i++)
-      people[i].position[1] += PLOT_HEIGHT / 3;
+    for (size_t i = 0; i < people.size(); i++)
+      people[i].position[1] += BOX_HEIGHT / 3;
     renderPeople();
     measure();
   });
   connect(slowDownBtn, &QPushButton::clicked, [=]() {
-    for (size_t i = 0; i < POPULATION_SIZE; i++) {
+    for (size_t i = 0; i < people.size(); i++) {
       people[i].velocity[0] = pow(abs(people[i].velocity[0]), 0.3);
       people[i].velocity[1] = pow(abs(people[i].velocity[1]), 0.3);
     }
     measure();
   });
   connect(bringDownBtn, &QPushButton::clicked, [=]() {
-    for (size_t i = 0; i < POPULATION_SIZE; i++)
-      if (people[i].position[1] > PLOT_HEIGHT * 0.8)
+    for (size_t i = 0; i < people.size(); i++)
+      if (people[i].position[1] > BOX_HEIGHT * 0.8)
         people[i].position[1] = pow(abs(people[i].position[1]), 0.6);
     renderPeople();
     measure();
   });
   connect(reinitBtn, &QPushButton::clicked, [=]() {
-    initRandomly(10, PLOT_HEIGHT * GRAVITY * PARTICLE_MASS);
+    initRandomly(10);
     renderPeople();
     measure();
   });
@@ -166,7 +166,7 @@ void BoxSimulator::buildUI() {
 void BoxSimulator::renderPeople() {
   healthySeries->clear();
   infectedSeries->clear();
-  for (size_t i = 0; i < POPULATION_SIZE; i++)
+  for (size_t i = 0; i < people.size(); i++)
     if (people[i].state == HEALTHY)
       *healthySeries << QPointF(people[i].position[0], people[i].position[1]);
     else
@@ -183,25 +183,21 @@ void BoxSimulator::updateHistograms() {
 }
 
 void BoxSimulator::measure() {
-  double E_kin = getKineticEnergy();
-  double E_pot = getGravitationalPotential();
-  double E_total = E_kin + E_pot;
+  // _energyMax = std::max(_energyMax, E_total);
+  // energyChart->axes(Qt::Vertical).first()->setRange(0, log10(_energyMax) + 1.5);
 
-  _energyMax = std::max(_energyMax, E_total);
-  energyChart->axes(Qt::Vertical).first()->setRange(0, log10(_energyMax) + 1.5);
-
-  double measurement = _step / STEPS_PER_MEASUREMENT;
-  *kineticEnergySeries << QPointF(measurement, log10(E_kin));
-  *potentialEnergySeries << QPointF(measurement, log10(E_pot));
-  // *LJpotentialEnergySeries << QPointF(measurement, log10(E_pot_LJ));
-  *totalEnergySeries << QPointF(measurement, log10(E_total));
-  if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
-    energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
+  // double measurement = _step / STEPS_PER_MEASUREMENT;
+  // *kineticEnergySeries << QPointF(measurement, log10(E_kin));
+  // *potentialEnergySeries << QPointF(measurement, log10(E_pot));
+  // // *LJpotentialEnergySeries << QPointF(measurement, log10(E_pot_LJ));
+  // *totalEnergySeries << QPointF(measurement, log10(E_total));
+  // if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
+  //   energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
   updateHistograms();
 
-  statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3")
-                          .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),
-                              QString::number(E_pot, 'E', 3)));
+  // statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3")
+  //                         .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),
+  //                             QString::number(E_pot, 'E', 3)));
 }
 
 void BoxSimulator::step() {
@@ -224,7 +220,7 @@ void BoxSimulator::setTheme(QChart::ChartTheme theme) {
 void BoxSimulator::infectPerson(const QPointF &point) {
   personChart->setAnimationOptions(QChart::NoAnimation);
   std::cout << point.x() << ", " << point.y() << std::endl;
-  for (size_t i = 0; i < POPULATION_SIZE; i++) {
+  for (size_t i = 0; i < people.size(); i++) {
     if (abs(people[i].position[0] - point.x()) < 1e-6 && abs(people[i].position[1] - point.y()) < 1e-6) {
       std::cout << "Found: " << people[i].position[0] << ", " << people[i].position[1] << std::endl;
       people[i].state = State::INFECTED;

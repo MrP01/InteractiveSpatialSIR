@@ -2,6 +2,7 @@
 #ifndef Server_H
 #define Server_H
 
+#include "Simulator.h"
 #include <QtCore/QList>
 #include <QtCore/QObject>
 
@@ -12,7 +13,7 @@ QT_FORWARD_DECLARE_CLASS(QString)
 class Server : public QObject {
   Q_OBJECT
  public:
-  explicit Server(quint16 port, QObject *parent = nullptr);
+  explicit Server(quint16 port, BoxSimulator *simulator, QObject *parent = nullptr);
   ~Server() override;
 
  private slots:
@@ -21,6 +22,7 @@ class Server : public QObject {
   void socketDisconnected();
 
  private:
+  BoxSimulator *m_simulator;
   QWebSocketServer *m_pWebSocketServer;
   QList<QWebSocket *> m_clients;
 };

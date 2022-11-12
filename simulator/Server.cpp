@@ -1,6 +1,7 @@
 // Copyright (C) 2016 Kurt Pattyn <pattyn.kurt@gmail.com>.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 #include "Server.h"
+#include <stdio.h>
 
 #include <QtCore>
 #include <QtWebSockets>
@@ -15,8 +16,8 @@ static QString getIdentifier(QWebSocket *peer) {
 }
 
 //! [constructor]
-Server::Server(quint16 port, QObject *parent)
-    : QObject(parent),
+Server::Server(quint16 port, BoxSimulator *simulator, QObject *parent)
+    : QObject(parent), m_simulator(simulator),
       m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Server"), QWebSocketServer::NonSecureMode, this)) {
   if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
     QTextStream(stdout) << "Connecting to joysticks on port " << port << '\n';
@@ -43,7 +44,10 @@ void Server::onNewConnection() {
 //! [processMessage]
 void Server::processMessage(const QString &message) {
   QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
-  QStringList pieces = message.split(" ");
+  // std::cout << pSender->localPort() << " and " << pSender->peerPort() << std::endl;
+  QTextStream(stdout) << "Incoming message: " << message << "\n";
+  QStringList pieces = message.split(";");
+  m_simulator->people[0].setVelocity(pieces[0].toDouble(), pieces[1].toDouble());
   // take in position and update
 }
 //! [processMessage]w

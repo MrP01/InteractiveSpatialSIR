@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Box.h"
 #include <QApplication>
 #include <QCheckBox>

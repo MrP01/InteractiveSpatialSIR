@@ -1,14 +1,15 @@
+#pragma once
+
 #include "Person.h"
 #include <array>
 #include <cmath>
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 // be careful to set numeric values as floats here
-#define POPULATION_SIZE 200        // number of persons
-#define PARTICLE_MASS 1.0          // mass of a person
 #define BOX_WIDTH 16               // width of the infinitely high box
-#define PLOT_HEIGHT 30             // height of the plot
+#define BOX_HEIGHT 30              // height of the plot
 #define GRAVITY 8.532e1            // 9.81 m/s², actual value in reduced units: 8.532e-05
 #define TAU 8.0e-4                 // time step
 #define VELOCITY_HISTOGRAM_BINS 16 // similarly, number of bins for the velocity histogram
@@ -19,7 +20,7 @@
 #define LJ_CUT_DIST_SQ (LJ_CUTOFF_DISTANCE * LJ_CUTOFF_DISTANCE)
 #define LJ_SIGMA_SQ (LJ_SIGMA * LJ_SIGMA)
 
-using PersonVectors = double (&)[POPULATION_SIZE][2];
+// using PersonVectors = double (&)[POPULATION_SIZE][2];
 
 struct VelocityHistogram {
   double min, max;
@@ -28,8 +29,8 @@ struct VelocityHistogram {
 };
 
 class PersonBox {
- protected:
-  Person people[POPULATION_SIZE];
+ public:
+  std::vector<Person> people{};
   struct VelocityHistogram velocityHist;
   double totalMeanVelocity = 0;
 
@@ -39,14 +40,9 @@ class PersonBox {
 
  public:
   PersonBox() = default;
-  void initRandomly(double initialKineticEnergy, double initialGravitationalPotential);
+  void initRandomly(double initialKineticEnergy);
   void simulate(size_t timesteps);
-  void f(PersonVectors &accelerations);
   void reflectPersons();
-  double getKineticEnergy();
-  double getGravitationalPotential();
-  double getLJPotential();
-  double getTotalEnergy();
   void computeVelocityHistogram();
   void exportToCSV();
 };

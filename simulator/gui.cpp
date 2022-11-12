@@ -8,10 +8,10 @@ int main(int argc, char **argv) {
   srand(time(NULL));
 
   BoxSimulator simulator;
-  simulator.initRandomly(40, PLOT_HEIGHT * PARTICLE_MASS * GRAVITY);
+  simulator.initRandomly(40);
   simulator.buildUI();
   simulator.resize(1380, 892);
   simulator.show();
-  Server server(1234);
+  Server server(1234, &simulator);
   return app.exec();
 }
