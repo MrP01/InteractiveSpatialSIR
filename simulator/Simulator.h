@@ -34,7 +34,7 @@ class BoxSimulator : public ParticleBox, public QMainWindow {
   QChart *energyChart = new QChart();
   QLineSeries *kineticEnergySeries = new QLineSeries();
   QLineSeries *potentialEnergySeries = new QLineSeries();
-  QLineSeries *LJpotentialEnergySeries = new QLineSeries();
+  // QLineSeries *LJpotentialEnergySeries = new QLineSeries();
   QLineSeries *totalEnergySeries = new QLineSeries();
 
   QChart *velocityHistChart = new QChart();
@@ -53,7 +53,7 @@ class BoxSimulator : public ParticleBox, public QMainWindow {
   size_t _start_step = 0;
   double _energyMax = 0;
   size_t _timerId;
-  void renderParticles();
+  void renderPeople();
   void updateHistograms();
   void measure();
   void step();
