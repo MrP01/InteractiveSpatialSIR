@@ -92,10 +92,7 @@ double ParticleBox::getKineticEnergy() {
   return PARTICLE_MASS / 2 * energy;
 }
 double ParticleBox::getGravitationalPotential() {
-  double totalHeight = 0;
-  for (size_t i = 0; i < PARTICLES; i++)
-    totalHeight += positions[i][1];
-  return PARTICLE_MASS * GRAVITY * totalHeight;
+  return PARTICLE_MASS * GRAVITY ;
 }
 double ParticleBox::getLJPotential() {
   double energy = 0;
@@ -114,22 +111,6 @@ double ParticleBox::getLJPotential() {
   return 4 * LJ_EPSILON * energy;
 }
 double ParticleBox::getTotalEnergy() { return getKineticEnergy() + getGravitationalPotential() + getLJPotential(); }
-
-void ParticleBox::computeHeightHistogram() {
-  heightHist.min = 0;
-  heightHist.max = PLOT_HEIGHT;
-  const double delta = heightHist.max - heightHist.min;
-  std::fill(std::begin(heightHist.heights), std::end(heightHist.heights), 0);
-  for (size_t i = 0; i < PARTICLES; i++) {
-    size_t bin = floor((positions[i][1] - heightHist.min) / delta * HEIGHT_HISTOGRAM_BINS);
-    if (bin >= HEIGHT_HISTOGRAM_BINS) // true for the last value
-      bin = HEIGHT_HISTOGRAM_BINS - 1;
-    heightHist.heights[bin]++;
-  }
-  heightHist.maxHeight = 0;
-  for (size_t bin = 0; bin < VELOCITY_HISTOGRAM_BINS; bin++)
-    heightHist.maxHeight = std::max(heightHist.maxHeight, heightHist.heights[bin]);
-}
 
 void ParticleBox::computeVelocityHistogram() {
   std::array<double, PARTICLES> values;

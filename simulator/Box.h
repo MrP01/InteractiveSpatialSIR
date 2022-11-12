@@ -24,12 +24,6 @@
 
 using ParticleVectors = double (&)[PARTICLES][2];
 
-struct HeightHistogram {
-  double min, max;
-  size_t heights[HEIGHT_HISTOGRAM_BINS] = {0};
-  size_t maxHeight = 1;
-};
-
 struct VelocityHistogram {
   double min, max;
   size_t heights[VELOCITY_HISTOGRAM_BINS] = {0};
@@ -40,7 +34,6 @@ class ParticleBox {
  protected:
   double positions[PARTICLES][2];
   double velocities[PARTICLES][2];
-  struct HeightHistogram heightHist;
   struct VelocityHistogram velocityHist;
   double totalMeanVelocity = 0;
 
@@ -58,7 +51,6 @@ class ParticleBox {
   double getGravitationalPotential();
   double getLJPotential();
   double getTotalEnergy();
-  void computeHeightHistogram();
   void computeVelocityHistogram();
   void exportToCSV();
 };
