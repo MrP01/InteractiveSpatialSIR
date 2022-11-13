@@ -8,7 +8,7 @@
 #include <vector>
 
 // be careful to set numeric values as floats here
-#define INITIAL_POP_SIZE 160       // initial population size
+#define INITIAL_POP_SIZE 120       // initial population size
 #define INITIAL_MAX_SPEED 3        // initial velocity max
 #define BOX_WIDTH 16               // width of the infinitely high box
 #define BOX_HEIGHT 30              // height of the plot

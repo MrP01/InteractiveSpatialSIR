@@ -27,15 +27,14 @@ void BoxSimulator::buildUI() {
   {
     numHealthySeries->setName("Healthy");
     numInfectedSeries->setName("Infected");
+    numInfectedSeries->setColor(Qt::red);
     energyChart->addSeries(numHealthySeries);
     energyChart->addSeries(numInfectedSeries);
     energyChart->setTitle("SIR development");
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
-    energyChart->axes(Qt::Horizontal)
-        .first()
-        ->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
+    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Time").arg(STEPS_PER_MEASUREMENT));
     energyChart->axes(Qt::Vertical).first()->setTitleText("Number of people");
 
     energyView->setRenderHint(QPainter::Antialiasing);
