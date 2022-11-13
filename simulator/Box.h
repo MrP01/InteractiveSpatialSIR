@@ -8,6 +8,8 @@
 #include <vector>
 
 // be careful to set numeric values as floats here
+#define INITIAL_POP_SIZE 160       // initial population size
+#define INITIAL_MAX_SPEED 3        // initial velocity max
 #define BOX_WIDTH 16               // width of the infinitely high box
 #define BOX_HEIGHT 30              // height of the plot
 #define GRAVITY 8.532e1            // 9.81 m/s², actual value in reduced units: 8.532e-05
@@ -45,4 +47,20 @@ class PersonBox {
   void reflectPersons();
   void computeVelocityHistogram();
   void exportToCSV();
+
+  size_t countHealthy() {
+    size_t n = 0;
+    for (auto p : people)
+      if (p.state == HEALTHY)
+        n++;
+    return n;
+  };
+
+  size_t countInfected() {
+    size_t n = 0;
+    for (auto p : people)
+      if (p.state == INFECTED)
+        n++;
+    return n;
+  };
 };

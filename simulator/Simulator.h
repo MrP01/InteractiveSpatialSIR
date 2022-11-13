@@ -35,10 +35,8 @@ class BoxSimulator : public PersonBox, public QMainWindow {
   QScatterSeries *infectedSeries = new QScatterSeries();
 
   QChart *energyChart = new QChart();
-  QLineSeries *kineticEnergySeries = new QLineSeries();
-  QLineSeries *potentialEnergySeries = new QLineSeries();
-  // QLineSeries *LJpotentialEnergySeries = new QLineSeries();
-  QLineSeries *totalEnergySeries = new QLineSeries();
+  QLineSeries *numHealthySeries = new QLineSeries();
+  QLineSeries *numInfectedSeries = new QLineSeries();
 
   QChart *velocityHistChart = new QChart();
   QBarSet *velocityHistSet = new QBarSet("Velocity");

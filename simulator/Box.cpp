@@ -6,8 +6,7 @@
 #include <string.h>
 
 void PersonBox::initRandomly(double initialKineticEnergy) {
-  // double approxHeight = initialGravitationalPotential / (PARTICLE_MASS * GRAVITY);
-  for (size_t i = 0; i < 120; i++) {
+  for (size_t i = 0; i < INITIAL_POP_SIZE; i++) {
     Person person = Person();
     double closestNeighbourDist = 0;
     while (closestNeighbourDist < 0.8) {
@@ -23,7 +22,8 @@ void PersonBox::initRandomly(double initialKineticEnergy) {
     }
 
     // std::cout << "Init person at " << person.position[0] << ", " << person.position[1] << std::endl;
-    person.setVelocity(((double)rand() / RAND_MAX) * 1.6 - 0.8, ((double)rand() / RAND_MAX) * 1.6 - 0.8);
+    person.setVelocity(((double)rand() / RAND_MAX - 0.5) * 2 * INITIAL_MAX_SPEED,
+        ((double)rand() / RAND_MAX - 0.5) * 2 * INITIAL_MAX_SPEED);
     people.push_back(person);
   }
 }

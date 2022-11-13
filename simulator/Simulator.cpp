@@ -25,22 +25,22 @@ void BoxSimulator::buildUI() {
 
   QChartView *energyView = new QChartView(this);
   {
-    kineticEnergySeries->setName("Kinetic Energy");
-    potentialEnergySeries->setName("Gravitational Potential");
-    totalEnergySeries->setName("Total Energy");
-    energyChart->addSeries(kineticEnergySeries);
-    energyChart->addSeries(potentialEnergySeries);
-    energyChart->addSeries(totalEnergySeries);
-    energyChart->setTitle("Energy development");
+    numHealthySeries->setName("Healthy");
+    numInfectedSeries->setName("Infected");
+    energyChart->addSeries(numHealthySeries);
+    energyChart->addSeries(numInfectedSeries);
+    energyChart->setTitle("SIR development");
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
     energyChart->axes(Qt::Horizontal)
         .first()
         ->setTitleText(QString("Measurement n / %1 steps").arg(STEPS_PER_MEASUREMENT));
-    energyChart->axes(Qt::Vertical).first()->setTitleText("Energy log10(E) / log10(eu)");
+    energyChart->axes(Qt::Vertical).first()->setTitleText("Number of people");
 
     energyView->setRenderHint(QPainter::Antialiasing);
+    energyView->setMaximumHeight(400);
+    energyView->setMinimumWidth(400);
     energyView->setChart(energyChart);
   }
 
@@ -143,7 +143,7 @@ void BoxSimulator::buildUI() {
   mainLayout->addWidget(personView, 0, 0);
   auto rightChartLayout = new QVBoxLayout();
   rightChartLayout->addWidget(energyView);
-  rightChartLayout->addWidget(velocityHistView);
+  rightChartLayout->addWidget(new QWidget(this));
   mainLayout->addLayout(rightChartLayout, 0, 2);
   mainLayout->addWidget(statsLabel, 1, 0, 1, 2);
   auto buttonLayout = new QHBoxLayout();
@@ -185,16 +185,13 @@ void BoxSimulator::updateHistograms() {
 }
 
 void BoxSimulator::measure() {
-  // _energyMax = std::max(_energyMax, E_total);
-  // energyChart->axes(Qt::Vertical).first()->setRange(0, log10(_energyMax) + 1.5);
+  energyChart->axes(Qt::Vertical).first()->setRange(0, (double)people.size());
 
-  // double measurement = _step / STEPS_PER_MEASUREMENT;
-  // *kineticEnergySeries << QPointF(measurement, log10(E_kin));
-  // *potentialEnergySeries << QPointF(measurement, log10(E_pot));
-  // // *LJpotentialEnergySeries << QPointF(measurement, log10(E_pot_LJ));
-  // *totalEnergySeries << QPointF(measurement, log10(E_total));
-  // if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
-  //   energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
+  double measurement = _step / STEPS_PER_MEASUREMENT;
+  *numHealthySeries << QPointF(measurement, healthySeries->count());
+  *numInfectedSeries << QPointF(measurement, infectedSeries->count());
+  if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
+    energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
   updateHistograms();
 
   // statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3")
