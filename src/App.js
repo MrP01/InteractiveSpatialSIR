@@ -7,17 +7,20 @@ import { Joystick } from "react-joystick-component";
 import React from "react";
 import { Button, TextInput } from "react-materialize";
 
-const socket = new WebSocket(`ws://${document.location.hostname}:1234`);
-socket.onopen = (event) => {
-  console.log("WebSocket Client Connected");
-};
+var socket = null;
+function connectSocket() {
+  socket = new WebSocket(`ws://${document.location.hostname}:1234`);
+  socket.onopen = () => {
+    console.log("WebSocket Client Connected");
+  };
+}
+connectSocket();
 
-let lastSentTimestamp = 0;
 function handleMove(event) {
-  if (Date.now() - lastSentTimestamp > 10) {
+  if (socket.readyState === WebSocket.OPEN) {
     socket.send(event.x / 3 + ";" + event.y / 3);
-    lastSentTimestamp = Date.now();
-    console.log("Sent move");
+  } else if (socket.readyState === WebSocket.CLOSED) {
+    connectSocket();
   }
 }
 function handleStop() {

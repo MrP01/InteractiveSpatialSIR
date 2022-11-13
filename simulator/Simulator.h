@@ -44,7 +44,7 @@ class BoxSimulator : public PersonBox, public QMainWindow {
   QBarSet *velocityHistSet = new QBarSet("Velocity");
 
   QPushButton *stepBtn = new QPushButton("Step");
-  QPushButton *controlBtn = new QPushButton("Start");
+  QPushButton *controlBtn = new QPushButton("Stop");
   QPushButton *liftBtn = new QPushButton("Lift Up");
   QPushButton *slowDownBtn = new QPushButton("Slow Down");
   QPushButton *bringDownBtn = new QPushButton("Bring Down");

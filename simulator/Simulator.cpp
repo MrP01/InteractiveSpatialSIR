@@ -161,6 +161,8 @@ void BoxSimulator::buildUI() {
 
   QShortcut *closeShortcut = new QShortcut(Qt::CTRL | Qt::Key_W, this);
   QObject::connect(closeShortcut, &QShortcut::activated, this, [=]() { close(); });
+
+  _timerId = startTimer(10);
 }
 
 void BoxSimulator::renderPeople() {
