@@ -5,6 +5,41 @@
 #include <iostream>
 #include <string.h>
 
+void PersonBox::simulateMovement(size_t timesteps) {
+  for (size_t t = 0; t < timesteps; t++) {
+    for (size_t i = 0; i < people.size(); i++) {
+      people[i].position[0] += TAU * people[i].velocity[0];
+      people[i].position[1] += TAU * people[i].velocity[1];
+    }
+    reflectPeople();
+  }
+}
+
+void PersonBox::simulateInfections() {
+  for (size_t i = 0; i < people.size(); i++) {
+    people[i].infectionTimer -= 0.01;
+    if (people[i].infectionTimer < 0) {
+      people[i].state = HEALTHY;
+    }
+
+    // q infects p
+    for (auto q : people) {
+      if (q.state == HEALTHY || q.infectionTimer > INFECTION_TIMER_INFECTIOUS)
+        continue; // only infectious people can infect others
+      double distance = std::hypot(people[i].position[0] - q.position[0], people[i].position[1] - q.position[1]);
+      if (distance < 1e-5)
+        continue;
+
+      double infectionProbability = 0.8 * exp(-6 * distance);
+      // std::cout << infectionProbability << std::endl;
+      if ((double)rand() / RAND_MAX < infectionProbability) {
+        people[i].state = INFECTED;
+        people[i].infectionTimer = INFECTION_TIMER_MAX;
+      }
+    }
+  }
+}
+
 void PersonBox::initRandomly(double initialKineticEnergy) {
   for (size_t i = 0; i < INITIAL_POP_SIZE; i++) {
     Person person = Person();
@@ -28,18 +63,7 @@ void PersonBox::initRandomly(double initialKineticEnergy) {
   }
 }
 
-void PersonBox::simulate(size_t timesteps) {
-  for (size_t t = 0; t < timesteps; t++) {
-    for (size_t i = 0; i < people.size(); i++) {
-      people[i].position[0] += TAU * people[i].velocity[0];
-      people[i].position[1] += TAU * people[i].velocity[1];
-    }
-    reflectPersons();
-    // time += TIME_STEP
-  }
-}
-
-void PersonBox::reflectPersons() {
+void PersonBox::reflectPeople() {
   for (size_t i = 0; i < people.size(); i++) {
     if (people[i].position[0] < 0) {
       people[i].position[0] = -people[i].position[0]; // assumes linear movement in this timestep

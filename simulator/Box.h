@@ -43,10 +43,11 @@ class PersonBox {
  public:
   PersonBox() = default;
   void initRandomly(double initialKineticEnergy);
-  void simulate(size_t timesteps);
-  void reflectPersons();
+  void simulateMovement(size_t timesteps);
+  void reflectPeople();
   void computeVelocityHistogram();
   void exportToCSV();
+  void simulateInfections();
 
   size_t countHealthy() {
     size_t n = 0;

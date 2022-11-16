@@ -199,33 +199,10 @@ void BoxSimulator::measure() {
 }
 
 void BoxSimulator::step() {
-  simulate(STEPS_PER_FRAME);
+  simulateMovement(STEPS_PER_FRAME);
+  simulateInfections();
   renderPeople();
   _step += STEPS_PER_FRAME;
-
-  for (size_t i = 0; i < people.size(); i++) {
-    people[i].infectionTimer -= 0.01;
-    if (people[i].infectionTimer < 0) {
-      people[i].state = HEALTHY;
-    }
-
-    // q infects p
-    for (auto q : people) {
-      if (q.state == HEALTHY || q.infectionTimer > INFECTION_TIMER_INFECTIOUS)
-        continue; // only infectious people can infect others
-      double distance = std::hypot(people[i].position[0] - q.position[0], people[i].position[1] - q.position[1]);
-      if (distance < 1e-5)
-        continue;
-
-      double infectionProbability = 0.8 * exp(-6 * distance);
-      // std::cout << infectionProbability << std::endl;
-      if ((double)rand() / RAND_MAX < infectionProbability) {
-        people[i].state = INFECTED;
-        people[i].infectionTimer = INFECTION_TIMER_MAX;
-      }
-    }
-  }
-
   if (_step % STEPS_PER_MEASUREMENT == 0)
     measure();
 }
