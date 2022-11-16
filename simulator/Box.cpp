@@ -8,8 +8,23 @@
 void PersonBox::simulateMovement(size_t timesteps) {
   for (size_t t = 0; t < timesteps; t++) {
     for (size_t i = 0; i < people.size(); i++) {
-      people[i].position[0] += TAU * people[i].velocity[0];
-      people[i].position[1] += TAU * people[i].velocity[1];
+      Person *p = &people[i];
+      struct City city = cities[p->cityIndex];
+      double dx = p->position[0] - city.center[0], dy = p->position[1] - city.center[1];
+      double distanceToCity = std::hypot(dx, dy);
+      if (distanceToCity > city.radius) { // Person p is outside of the city
+        double urbanForce = 520 * distanceToCity / city.radius;
+        p->velocity[0] -= urbanForce * dx / distanceToCity * TAU;
+        p->velocity[1] -= urbanForce * dy / distanceToCity * TAU;
+        // std::cout << "urban force: " << p->velocity[0] << ", " << p->velocity[1] << std::endl;
+      } else {
+        double totalVelocity = std::hypot(p->velocity[0], p->velocity[1]);
+        p->velocity[0] /= totalVelocity * 0.1;
+        p->velocity[1] /= totalVelocity * 0.1;
+      }
+
+      p->position[0] += TAU * p->velocity[0];
+      p->position[1] += TAU * p->velocity[1];
     }
     reflectPeople();
   }
@@ -53,12 +68,11 @@ void PersonBox::initRandomly(double initialKineticEnergy) {
         closestNeighbourDist = std::min(closestNeighbourDist,
             std::hypot(person.position[0] - people[j].position[0], person.position[1] - people[j].position[1]));
       }
-      // std::cout << "." << std::flush;
     }
 
-    // std::cout << "Init person at " << person.position[0] << ", " << person.position[1] << std::endl;
     person.setVelocity(((double)rand() / RAND_MAX - 0.5) * 2 * INITIAL_MAX_SPEED,
         ((double)rand() / RAND_MAX - 0.5) * 2 * INITIAL_MAX_SPEED);
+    person.cityIndex = i % cities.size();
     people.push_back(person);
   }
 }

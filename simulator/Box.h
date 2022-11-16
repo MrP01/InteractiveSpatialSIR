@@ -30,9 +30,15 @@ struct VelocityHistogram {
   size_t maxHeight = 1;
 };
 
+struct City {
+  double center[2];
+  double radius;
+};
+
 class PersonBox {
  public:
   std::vector<Person> people{};
+  std::vector<struct City> cities{{{2, 2}, 3}, {{12, 9}, 4}, {{2, 25}, 5}};
   struct VelocityHistogram velocityHist;
   double totalMeanVelocity = 0;
 

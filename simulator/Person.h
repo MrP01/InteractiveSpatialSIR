@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #define INFECTION_TIMER_MAX 12
 #define INFECTION_TIMER_INFECTIOUS 8
 
@@ -12,6 +14,7 @@ class Person {
   double velocity[2];
   enum State state = HEALTHY;
   double infectionTimer;
+  size_t cityIndex = 0;
 
   void setPosition(double x, double y) {
     position[0] = x;
@@ -22,4 +25,6 @@ class Person {
     velocity[0] = x;
     velocity[1] = y;
   };
+
+  void moveToAnotherCity();
 };
