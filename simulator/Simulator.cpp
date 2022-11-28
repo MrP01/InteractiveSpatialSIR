@@ -31,9 +31,13 @@ void BoxSimulator::buildUI() {
   {
     numHealthySeries->setName("Healthy");
     numInfectedSeries->setName("Infected");
+    numRecoveredSeries->setName("Recovered");
+    numHealthySeries->setColor(Qt::blue);
     numInfectedSeries->setColor(Qt::red);
+    numRecoveredSeries->setColor(Qt::green);
     energyChart->addSeries(numHealthySeries);
     energyChart->addSeries(numInfectedSeries);
+    energyChart->addSeries(numRecoveredSeries);
     energyChart->setTitle("SIR development");
     energyChart->createDefaultAxes();
 
@@ -196,6 +200,7 @@ void BoxSimulator::measure() {
   double measurement = _step / STEPS_PER_MEASUREMENT;
   *numHealthySeries << QPointF(measurement, healthySeries->count());
   *numInfectedSeries << QPointF(measurement, infectedSeries->count());
+  *numRecoveredSeries << QPointF(measurement, recoveredSeries->count());
   if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
     energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
   updateHistograms();

@@ -7,7 +7,7 @@
 
 void PersonBox::simulateMovement(size_t timesteps) {
   for (size_t t = 0; t < timesteps; t++) {
-    size_t S = 0, I = 0;
+    size_t S = 0, I = 0, R = 0;
     for (size_t i = 0; i < people.size(); i++) {
       Person *p = &people[i];
 
@@ -30,13 +30,20 @@ void PersonBox::simulateMovement(size_t timesteps) {
       p->position[0] += TAU * p->velocity[0];
       p->position[1] += TAU * p->velocity[1];
 
-      if (p->state == HEALTHY)
+      switch (p->state) {
+      case HEALTHY:
         S++;
-      if (p->state == INFECTED)
+        break;
+      case INFECTED:
         I++;
+        break;
+      case RECOVERED:
+        R++;
+        break;
+      }
     }
     reflectPeople();
-    logs.push_back({time, S, I});
+    logs.push_back({time, S, I, R});
     time += TAU;
   }
 }
@@ -45,16 +52,18 @@ void PersonBox::simulateInfections() {
   for (auto p = people.begin(); p < people.end(); p++) {
     if (p->infectionTimer > 0) {
       p->infectionTimer -= 0.01;
-      std::cout << p->infectionTimer << std::endl;
+      // std::cout << p->infectionTimer << std::endl;
       if (p->infectionTimer <= 0.03) {
         std::cout << "I have recovered" << std::endl;
         p->state = RECOVERED;
       }
     }
 
-    // q infects p
+    if (p->state != HEALTHY)
+      continue; // Person p is already infected or recovered, no need to check for more
+    // q infects p:
     for (auto q : people) {
-      if (q.state == HEALTHY)
+      if (q.state != INFECTED)
         continue; // only infectious people can infect others
       double distance = std::hypot(p->position[0] - q.position[0], p->position[1] - q.position[1]);
       if (distance < 1e-5)
@@ -143,6 +152,6 @@ void PersonBox::exportToCSV() {
 
   std::ofstream timeseriesCsv("/tmp/timeseries.csv");
   for (auto log : logs)
-    timeseriesCsv << log.time << ", " << log.healthy << ", " << log.infected << "\n";
+    timeseriesCsv << log.time << ", " << log.healthy << ", " << log.infected << ", " << log.recovered << "\n";
   timeseriesCsv.close();
 }

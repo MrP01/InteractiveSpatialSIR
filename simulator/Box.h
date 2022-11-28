@@ -9,7 +9,7 @@
 
 // be careful to set numeric values as floats here
 #define INITIAL_POP_SIZE 120       // initial population size
-#define INITIAL_MAX_SPEED 3        // initial velocity max
+#define INITIAL_MAX_SPEED 5        // initial velocity max
 #define BOX_WIDTH 16               // width of the infinitely high box
 #define BOX_HEIGHT 30              // height of the plot
 #define GRAVITY 8.532e1            // 9.81 m/s², actual value in reduced units: 8.532e-05
@@ -40,6 +40,7 @@ struct Log {
   double time;
   size_t healthy;
   size_t infected;
+  size_t recovered;
 };
 
 class PersonBox {
