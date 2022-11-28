@@ -43,11 +43,11 @@ void Server::onNewConnection() {
 void Server::processMessage(const QString &message) {
   QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
   // std::cout << pSender->localPort() << " and " << pSender->peerPort() << std::endl;
-  QTextStream(stdout) << "Incoming message: " << message << "\n";
+  // QTextStream(stdout) << "Incoming message: " << message << "\n";
   QStringList pieces = message.split(";");
   size_t my_index = pSender->peerPort() % m_simulator->people.size();
-  m_simulator->people[my_index].setVelocity(pieces[0].toDouble(), pieces[1].toDouble());
-  // take in position and update
+  m_simulator->people[my_index].setVelocity(
+      pieces[0].toDouble() * INITIAL_MAX_SPEED * 10, pieces[1].toDouble() * INITIAL_MAX_SPEED * 10);
 }
 //! [processMessage]
 
