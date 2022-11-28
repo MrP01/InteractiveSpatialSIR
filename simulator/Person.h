@@ -6,6 +6,7 @@
 enum State {
   HEALTHY,
   INFECTED,
+  RECOVERED,
 };
 
 class Person {
@@ -13,7 +14,7 @@ class Person {
   double position[2];
   double velocity[2];
   enum State state = HEALTHY;
-  double infectionTimer;
+  double infectionTimer = 0;
   size_t cityIndex = 0;
 
   void setPosition(double x, double y) {

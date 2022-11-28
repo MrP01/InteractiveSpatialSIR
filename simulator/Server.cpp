@@ -18,7 +18,7 @@ Server::Server(quint16 port, BoxSimulator *simulator, QObject *parent)
     : QObject(parent), m_simulator(simulator),
       m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Server"), QWebSocketServer::NonSecureMode, this)) {
   if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
-    QTextStream(stdout) << "Connecting to joysticks on port " << port << '\n';
+    QTextStream(stdout) << "Listening for joysticks on port " << port << '\n';
     connect(m_pWebSocketServer, &QWebSocketServer::newConnection, this, &Server::onNewConnection);
   }
 }

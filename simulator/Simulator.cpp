@@ -5,13 +5,17 @@ void BoxSimulator::buildUI() {
   {
     healthySeries->setName("Healthy");
     infectedSeries->setName("Infected");
+    recoveredSeries->setName("Recovered");
+    healthySeries->setColor(Qt::blue);
     infectedSeries->setColor(Qt::red);
+    recoveredSeries->setColor(Qt::green);
     renderPeople();
     connect(healthySeries, &QScatterSeries::clicked, this, &BoxSimulator::infectPerson);
 
     personChart->setTitle("Person Box");
     personChart->addSeries(healthySeries);
     personChart->addSeries(infectedSeries);
+    personChart->addSeries(recoveredSeries);
     personChart->createDefaultAxes();
     personChart->axes(Qt::Horizontal).first()->setRange(0, BOX_WIDTH);
     personChart->axes(Qt::Vertical).first()->setRange(0, BOX_HEIGHT);
@@ -34,7 +38,7 @@ void BoxSimulator::buildUI() {
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
-    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Time").arg(STEPS_PER_MEASUREMENT));
+    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Time"));
     energyChart->axes(Qt::Vertical).first()->setTitleText("Number of people");
 
     energyView->setRenderHint(QPainter::Antialiasing);
@@ -167,11 +171,14 @@ void BoxSimulator::buildUI() {
 void BoxSimulator::renderPeople() {
   healthySeries->clear();
   infectedSeries->clear();
+  recoveredSeries->clear();
   for (size_t i = 0; i < people.size(); i++)
     if (people[i].state == HEALTHY)
       *healthySeries << QPointF(people[i].position[0], people[i].position[1]);
-    else
+    else if (people[i].state == INFECTED)
       *infectedSeries << QPointF(people[i].position[0], people[i].position[1]);
+    else
+      *recoveredSeries << QPointF(people[i].position[0], people[i].position[1]);
 }
 
 void BoxSimulator::updateHistograms() {

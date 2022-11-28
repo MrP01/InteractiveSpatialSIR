@@ -33,6 +33,7 @@ class BoxSimulator : public PersonBox, public QMainWindow {
   QChart *personChart = new QChart();
   QScatterSeries *healthySeries = new QScatterSeries();
   QScatterSeries *infectedSeries = new QScatterSeries();
+  QScatterSeries *recoveredSeries = new QScatterSeries();
 
   QChart *energyChart = new QChart();
   QLineSeries *numHealthySeries = new QLineSeries();

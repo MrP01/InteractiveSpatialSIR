@@ -7,8 +7,11 @@
 
 void PersonBox::simulateMovement(size_t timesteps) {
   for (size_t t = 0; t < timesteps; t++) {
+    size_t S = 0, I = 0;
     for (size_t i = 0; i < people.size(); i++) {
       Person *p = &people[i];
+
+#if CITY_FORCE
       struct City city = cities[p->cityIndex];
       double dx = p->position[0] - city.center[0], dy = p->position[1] - city.center[1];
       double distanceToCity = std::hypot(dx, dy);
@@ -22,34 +25,46 @@ void PersonBox::simulateMovement(size_t timesteps) {
         p->velocity[0] /= totalVelocity * 0.1;
         p->velocity[1] /= totalVelocity * 0.1;
       }
+#endif
 
       p->position[0] += TAU * p->velocity[0];
       p->position[1] += TAU * p->velocity[1];
+
+      if (p->state == HEALTHY)
+        S++;
+      if (p->state == INFECTED)
+        I++;
     }
     reflectPeople();
+    logs.push_back({time, S, I});
+    time += TAU;
   }
 }
 
 void PersonBox::simulateInfections() {
-  for (size_t i = 0; i < people.size(); i++) {
-    people[i].infectionTimer -= 0.01;
-    if (people[i].infectionTimer < 0) {
-      people[i].state = HEALTHY;
+  for (auto p = people.begin(); p < people.end(); p++) {
+    if (p->infectionTimer > 0) {
+      p->infectionTimer -= 0.01;
+      std::cout << p->infectionTimer << std::endl;
+      if (p->infectionTimer <= 0.03) {
+        std::cout << "I have recovered" << std::endl;
+        p->state = RECOVERED;
+      }
     }
 
     // q infects p
     for (auto q : people) {
-      if (q.state == HEALTHY || q.infectionTimer > INFECTION_TIMER_INFECTIOUS)
+      if (q.state == HEALTHY)
         continue; // only infectious people can infect others
-      double distance = std::hypot(people[i].position[0] - q.position[0], people[i].position[1] - q.position[1]);
+      double distance = std::hypot(p->position[0] - q.position[0], p->position[1] - q.position[1]);
       if (distance < 1e-5)
         continue;
 
       double infectionProbability = 0.8 * exp(-6 * distance);
       // std::cout << infectionProbability << std::endl;
       if ((double)rand() / RAND_MAX < infectionProbability) {
-        people[i].state = INFECTED;
-        people[i].infectionTimer = INFECTION_TIMER_MAX;
+        p->state = INFECTED;
+        p->infectionTimer = INFECTION_TIMER_MAX;
       }
     }
   }
@@ -78,28 +93,28 @@ void PersonBox::initRandomly(double initialKineticEnergy) {
 }
 
 void PersonBox::reflectPeople() {
-  for (size_t i = 0; i < people.size(); i++) {
-    if (people[i].position[0] < 0) {
-      people[i].position[0] = -people[i].position[0]; // assumes linear movement in this timestep
-      people[i].velocity[0] = -people[i].velocity[0];
-    } else if (people[i].position[0] > BOX_WIDTH) {
-      people[i].position[0] = BOX_WIDTH - (people[i].position[0] - BOX_WIDTH); // assumes linear movement
-      people[i].velocity[0] = -people[i].velocity[0];
+  for (auto p = people.begin(); p < people.end(); p++) {
+    if (p->position[0] < 0) {
+      p->position[0] = -p->position[0]; // assumes linear movement in this timestep
+      p->velocity[0] = -p->velocity[0];
+    } else if (p->position[0] > BOX_WIDTH) {
+      p->position[0] = BOX_WIDTH - (p->position[0] - BOX_WIDTH); // assumes linear movement
+      p->velocity[0] = -p->velocity[0];
     }
-    if (people[i].position[1] < 0) {
-      people[i].position[1] = -people[i].position[1]; // assumes linear movement
-      people[i].velocity[1] = -people[i].velocity[1];
-    } else if (people[i].position[1] > BOX_HEIGHT) {
-      people[i].position[1] = BOX_HEIGHT - (people[i].position[1] - BOX_HEIGHT);
-      people[i].velocity[1] = -people[i].velocity[1];
+    if (p->position[1] < 0) {
+      p->position[1] = -p->position[1]; // assumes linear movement
+      p->velocity[1] = -p->velocity[1];
+    } else if (p->position[1] > BOX_HEIGHT) {
+      p->position[1] = BOX_HEIGHT - (p->position[1] - BOX_HEIGHT);
+      p->velocity[1] = -p->velocity[1];
     }
   }
 }
 
 void PersonBox::computeVelocityHistogram() {
   std::vector<double> values;
-  for (size_t i = 0; i < people.size(); i++)
-    values.push_back(sqrt(square(people[i].velocity[0]) + square(people[i].velocity[1])));
+  for (auto p : people)
+    values.push_back(sqrt(square(p.velocity[0]) + square(p.velocity[1])));
   const auto [_min, _max] = std::minmax_element(values.begin(), values.end());
   velocityHist.min = *_min;
   velocityHist.max = *_max;
@@ -118,11 +133,16 @@ void PersonBox::computeVelocityHistogram() {
 
 void PersonBox::exportToCSV() {
   std::ofstream positionsCsv("/tmp/positions.csv");
-  for (size_t i = 0; i < people.size(); i++)
-    positionsCsv << people[i].position[0] << ", " << people[i].position[1] << "\n";
+  for (auto p : people)
+    positionsCsv << p.position[0] << ", " << p.position[1] << "\n";
   positionsCsv.close();
   std::ofstream velocitiesCsv("/tmp/velocities.csv");
-  for (size_t i = 0; i < people.size(); i++)
-    velocitiesCsv << people[i].velocity[0] << ", " << people[i].velocity[1] << "\n";
+  for (auto p : people)
+    velocitiesCsv << p.velocity[0] << ", " << p.velocity[1] << "\n";
   velocitiesCsv.close();
+
+  std::ofstream timeseriesCsv("/tmp/timeseries.csv");
+  for (auto log : logs)
+    timeseriesCsv << log.time << ", " << log.healthy << ", " << log.infected << "\n";
+  timeseriesCsv.close();
 }
