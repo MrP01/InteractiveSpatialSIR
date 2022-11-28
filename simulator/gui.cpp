@@ -8,9 +8,9 @@ int main(int argc, char **argv) {
   srand(time(NULL));
 
   BoxSimulator simulator;
-  simulator.initRandomly(40);
+  simulator.initRandomly();
   simulator.buildUI();
-  simulator.resize(1380, 892);
+  simulator.resize(1380, 1024);
   simulator.show();
   Server server(1234, &simulator);
   return app.exec();

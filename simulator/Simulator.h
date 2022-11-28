@@ -51,6 +51,7 @@ class BoxSimulator : public PersonBox, public QMainWindow {
   QPushButton *reinitBtn = new QPushButton("Re-init");
   QPushButton *exportBtn = new QPushButton("Export");
   QLabel *statsLabel = new QLabel(QString("Persons in a box of width %1").arg(BOX_WIDTH));
+  QCheckBox *autoScroll = new QCheckBox("Auto-Scroll");
 
   size_t _step = 0;
   size_t _start_step = 0;

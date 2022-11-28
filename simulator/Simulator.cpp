@@ -12,7 +12,7 @@ void BoxSimulator::buildUI() {
     renderPeople();
     connect(healthySeries, &QScatterSeries::clicked, this, &BoxSimulator::infectPerson);
 
-    personChart->setTitle("Person Box");
+    // personChart->setTitle("Person Box");
     personChart->addSeries(healthySeries);
     personChart->addSeries(infectedSeries);
     personChart->addSeries(recoveredSeries);
@@ -42,12 +42,12 @@ void BoxSimulator::buildUI() {
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
-    energyChart->axes(Qt::Horizontal).first()->setTitleText(QString("Time"));
+    energyChart->axes(Qt::Horizontal).first()->setTitleText("Time");
     energyChart->axes(Qt::Vertical).first()->setTitleText("Number of people");
 
     energyView->setRenderHint(QPainter::Antialiasing);
-    energyView->setMaximumHeight(400);
-    energyView->setMinimumWidth(400);
+    energyView->setMaximumHeight(300);
+    // energyView->setMinimumWidth(400);
     energyView->setChart(energyChart);
   }
 
@@ -110,7 +110,7 @@ void BoxSimulator::buildUI() {
     measure();
   });
   connect(reinitBtn, &QPushButton::clicked, [=]() {
-    initRandomly(10);
+    initRandomly();
     renderPeople();
     measure();
   });
@@ -144,15 +144,10 @@ void BoxSimulator::buildUI() {
       break;
     }
   });
+  themeBox->setMaximumWidth(200);
 
   auto mainWidget = new QWidget(this);
   auto mainLayout = new QGridLayout(mainWidget);
-  mainLayout->addWidget(personView, 0, 0);
-  auto rightChartLayout = new QVBoxLayout();
-  rightChartLayout->addWidget(energyView);
-  rightChartLayout->addWidget(new QWidget(this));
-  mainLayout->addLayout(rightChartLayout, 0, 2);
-  mainLayout->addWidget(statsLabel, 1, 0, 1, 2);
   auto buttonLayout = new QHBoxLayout();
   buttonLayout->addWidget(controlBtn);
   buttonLayout->addWidget(stepBtn);
@@ -161,8 +156,14 @@ void BoxSimulator::buildUI() {
   buttonLayout->addWidget(bringDownBtn);
   buttonLayout->addWidget(reinitBtn);
   buttonLayout->addWidget(exportBtn);
-  buttonLayout->addWidget(themeBox);
-  mainLayout->addLayout(buttonLayout, 2, 0, 1, 3);
+  auto settingsLayout = new QVBoxLayout();
+  settingsLayout->addWidget(autoScroll);
+  settingsLayout->addWidget(themeBox);
+  mainLayout->addLayout(buttonLayout, 0, 0, 1, 2);
+  mainLayout->addWidget(personView, 1, 0, 1, 2);
+  mainLayout->addWidget(energyView, 2, 0);
+  mainLayout->addLayout(settingsLayout, 2, 1);
+  mainLayout->addWidget(statsLabel, 3, 0);
   setCentralWidget(mainWidget);
   setWindowTitle("Person Box Simulator");
 
@@ -202,7 +203,10 @@ void BoxSimulator::measure() {
   *numInfectedSeries << QPointF(measurement, infectedSeries->count());
   *numRecoveredSeries << QPointF(measurement, recoveredSeries->count());
   if (measurement > MEASUREMENTS_IN_ENERGY_PLOT)
-    energyChart->axes(Qt::Horizontal).first()->setRange((measurement - MEASUREMENTS_IN_ENERGY_PLOT), measurement);
+    if (autoScroll->isChecked())
+      energyChart->axes(Qt::Horizontal).first()->setRange(measurement - MEASUREMENTS_IN_ENERGY_PLOT, measurement);
+    else
+      energyChart->axes(Qt::Horizontal).first()->setRange(0, measurement);
   updateHistograms();
 
   // statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3")

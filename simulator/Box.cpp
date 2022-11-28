@@ -79,7 +79,7 @@ void PersonBox::simulateInfections() {
   }
 }
 
-void PersonBox::initRandomly(double initialKineticEnergy) {
+void PersonBox::initRandomly() {
   for (size_t i = 0; i < INITIAL_POP_SIZE; i++) {
     Person person = Person();
     double closestNeighbourDist = 0;
