@@ -52,11 +52,8 @@ void PersonBox::simulateInfections() {
   for (auto p = people.begin(); p < people.end(); p++) {
     if (p->infectionTimer > 0) {
       p->infectionTimer -= 0.01;
-      // std::cout << p->infectionTimer << std::endl;
-      if (p->infectionTimer <= 0.03) {
-        std::cout << "I have recovered" << std::endl;
+      if (p->infectionTimer <= 0.03)
         p->state = RECOVERED;
-      }
     }
 
     if (p->state != HEALTHY)

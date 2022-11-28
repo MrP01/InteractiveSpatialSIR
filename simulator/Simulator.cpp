@@ -6,9 +6,6 @@ void BoxSimulator::buildUI() {
     healthySeries->setName("Healthy");
     infectedSeries->setName("Infected");
     recoveredSeries->setName("Recovered");
-    healthySeries->setColor(Qt::blue);
-    infectedSeries->setColor(Qt::red);
-    recoveredSeries->setColor(Qt::green);
     renderPeople();
     connect(healthySeries, &QScatterSeries::clicked, this, &BoxSimulator::infectPerson);
 
@@ -32,13 +29,10 @@ void BoxSimulator::buildUI() {
     numHealthySeries->setName("Healthy");
     numInfectedSeries->setName("Infected");
     numRecoveredSeries->setName("Recovered");
-    numHealthySeries->setColor(Qt::blue);
-    numInfectedSeries->setColor(Qt::red);
-    numRecoveredSeries->setColor(Qt::green);
     energyChart->addSeries(numHealthySeries);
     energyChart->addSeries(numInfectedSeries);
     energyChart->addSeries(numRecoveredSeries);
-    energyChart->setTitle("SIR development");
+    // energyChart->setTitle("SIR development");
     energyChart->createDefaultAxes();
 
     energyChart->axes(Qt::Horizontal).first()->setRange(0, MEASUREMENTS_IN_ENERGY_PLOT);
@@ -51,25 +45,25 @@ void BoxSimulator::buildUI() {
     energyView->setChart(energyChart);
   }
 
-  QChartView *velocityHistView = new QChartView(this);
-  {
-    for (size_t bin = 0; bin < VELOCITY_HISTOGRAM_BINS; bin++)
-      *velocityHistSet << 1;
-    QStackedBarSeries *series = new QStackedBarSeries();
-    series->append(velocityHistSet);
-    velocityHistChart->addSeries(series);
-    velocityHistChart->addAxis(new QValueAxis(), Qt::AlignBottom);
-    series->attachAxis(new QValueAxis()); // this axis is not shown, only used for scaling
-    velocityHistChart->axes(Qt::Horizontal).first()->setRange(0, VELOCITY_HISTOGRAM_BINS);
-    QValueAxis *axisY = new QValueAxis();
-    velocityHistChart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
-    velocityHistChart->setAnimationOptions(QChart::SeriesAnimations);
-    velocityHistView->setRenderHint(QPainter::Antialiasing);
-    velocityHistView->setChart(velocityHistChart);
-    velocityHistView->setMinimumWidth(450);
-  }
-  updateHistograms();
+  // QChartView *velocityHistView = new QChartView(this);
+  // {
+  //   for (size_t bin = 0; bin < VELOCITY_HISTOGRAM_BINS; bin++)
+  //     *velocityHistSet << 1;
+  //   QStackedBarSeries *series = new QStackedBarSeries();
+  //   series->append(velocityHistSet);
+  //   velocityHistChart->addSeries(series);
+  //   velocityHistChart->addAxis(new QValueAxis(), Qt::AlignBottom);
+  //   series->attachAxis(new QValueAxis()); // this axis is not shown, only used for scaling
+  //   velocityHistChart->axes(Qt::Horizontal).first()->setRange(0, VELOCITY_HISTOGRAM_BINS);
+  //   QValueAxis *axisY = new QValueAxis();
+  //   velocityHistChart->addAxis(axisY, Qt::AlignLeft);
+  //   series->attachAxis(axisY);
+  //   velocityHistChart->setAnimationOptions(QChart::SeriesAnimations);
+  //   velocityHistView->setRenderHint(QPainter::Antialiasing);
+  //   velocityHistView->setChart(velocityHistChart);
+  //   velocityHistView->setMinimumWidth(450);
+  // }
+  // updateHistograms();
 
   connect(stepBtn, &QPushButton::clicked, [=]() { step(); });
   connect(controlBtn, &QPushButton::clicked, [=]() {
@@ -145,6 +139,7 @@ void BoxSimulator::buildUI() {
     }
   });
   themeBox->setMaximumWidth(200);
+  setTheme(QChart::ChartThemeLight);
 
   auto mainWidget = new QWidget(this);
   auto mainLayout = new QGridLayout(mainWidget);
@@ -186,15 +181,6 @@ void BoxSimulator::renderPeople() {
       *recoveredSeries << QPointF(people[i].position[0], people[i].position[1]);
 }
 
-void BoxSimulator::updateHistograms() {
-  computeVelocityHistogram();
-  velocityHistChart->axes(Qt::Horizontal).first()->setRange(velocityHist.min, velocityHist.max);
-  velocityHistChart->axes(Qt::Vertical).first()->setRange(0, (double)velocityHist.maxHeight);
-  velocityHistSet->remove(0, VELOCITY_HISTOGRAM_BINS);
-  for (size_t bin = 0; bin < VELOCITY_HISTOGRAM_BINS; bin++)
-    *velocityHistSet << velocityHist.heights[bin];
-}
-
 void BoxSimulator::measure() {
   energyChart->axes(Qt::Vertical).first()->setRange(0, (double)people.size());
 
@@ -207,11 +193,8 @@ void BoxSimulator::measure() {
       energyChart->axes(Qt::Horizontal).first()->setRange(measurement - MEASUREMENTS_IN_ENERGY_PLOT, measurement);
     else
       energyChart->axes(Qt::Horizontal).first()->setRange(0, measurement);
-  updateHistograms();
 
-  // statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3")
-  //                         .arg(QString::number(_step * TAU * ONE_SECOND, 'E', 3), QString::number(E_kin, 'E', 3),
-  //                             QString::number(E_pot, 'E', 3)));
+  // statsLabel->setText(QString("t = %1 tu,\t E_kin = %2,\t E_pot = %3");
 }
 
 void BoxSimulator::step() {
@@ -229,6 +212,13 @@ void BoxSimulator::setTheme(QChart::ChartTheme theme) {
   energyChart->setTheme(theme);
   velocityHistChart->setTheme(theme);
   personChart->setTheme(theme);
+
+  healthySeries->setColor(Qt::blue);
+  infectedSeries->setColor(Qt::red);
+  recoveredSeries->setColor(Qt::green);
+  numHealthySeries->setColor(Qt::blue);
+  numInfectedSeries->setColor(Qt::red);
+  numRecoveredSeries->setColor(Qt::green);
 }
 
 void BoxSimulator::infectPerson(const QPointF &point) {
