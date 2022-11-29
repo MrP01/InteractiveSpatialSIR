@@ -22,9 +22,9 @@ class Server : public QObject {
   void socketDisconnected();
 
  private:
-  BoxSimulator *m_simulator;
-  QWebSocketServer *m_pWebSocketServer;
-  QList<QWebSocket *> m_clients;
+  BoxSimulator *simulator;
+  QWebSocketServer *webSocketServer;
+  QList<QWebSocket *> clients;
 };
 
 #endif // Server_H

@@ -23,7 +23,7 @@
 #include <QtCharts/QStackedBarSeries>
 #include <QtCharts/QValueAxis>
 
-#define STEPS_PER_FRAME 4        // number of timesteps per frame
+#define STEPS_PER_FRAME 1        // number of timesteps per frame
 #define FRAMES_PER_MEASUREMENT 2 // how often we measure
 #define STEPS_PER_MEASUREMENT (STEPS_PER_FRAME * FRAMES_PER_MEASUREMENT)
 #define MEASUREMENTS_IN_ENERGY_PLOT 600
@@ -48,7 +48,7 @@ class BoxSimulator : public PersonBox, public QMainWindow {
   QPushButton *liftBtn = new QPushButton("Lift Up");
   QPushButton *slowDownBtn = new QPushButton("Slow Down");
   QPushButton *bringDownBtn = new QPushButton("Bring Down");
-  QPushButton *reinitBtn = new QPushButton("Re-init");
+  QPushButton *reinitBtn = new QPushButton("Add more");
   QPushButton *exportBtn = new QPushButton("Export");
   QLabel *statsLabel = new QLabel(QString("Persons in a box of width %1").arg(BOX_WIDTH));
   QCheckBox *autoScroll = new QCheckBox("Auto-Scroll");

@@ -15,27 +15,27 @@ static QString getIdentifier(QWebSocket *peer) {
 
 //! [constructor]
 Server::Server(quint16 port, BoxSimulator *simulator, QObject *parent)
-    : QObject(parent), m_simulator(simulator),
-      m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Server"), QWebSocketServer::NonSecureMode, this)) {
-  if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
+    : QObject(parent), simulator(simulator),
+      webSocketServer(new QWebSocketServer(QStringLiteral("Server"), QWebSocketServer::NonSecureMode, this)) {
+  if (webSocketServer->listen(QHostAddress::Any, port)) {
     QTextStream(stdout) << "Listening for joysticks on port " << port << '\n';
-    connect(m_pWebSocketServer, &QWebSocketServer::newConnection, this, &Server::onNewConnection);
+    connect(webSocketServer, &QWebSocketServer::newConnection, this, &Server::onNewConnection);
   }
 }
 
-Server::~Server() { m_pWebSocketServer->close(); }
+Server::~Server() { webSocketServer->close(); }
 //! [constructor]
 
 //! [onNewConnection]
 void Server::onNewConnection() {
-  auto pSocket = m_pWebSocketServer->nextPendingConnection();
+  auto pSocket = webSocketServer->nextPendingConnection();
   QTextStream(stdout) << getIdentifier(pSocket) << " connected!\n";
   pSocket->setParent(this);
 
   connect(pSocket, &QWebSocket::textMessageReceived, this, &Server::processMessage);
   connect(pSocket, &QWebSocket::disconnected, this, &Server::socketDisconnected);
 
-  m_clients << pSocket;
+  clients << pSocket;
 }
 //! [onNewConnection]
 
@@ -45,8 +45,9 @@ void Server::processMessage(const QString &message) {
   // std::cout << pSender->localPort() << " and " << pSender->peerPort() << std::endl;
   // QTextStream(stdout) << "Incoming message: " << message << "\n";
   QStringList pieces = message.split(";");
-  size_t my_index = pSender->peerPort() % m_simulator->people.size();
-  m_simulator->people[my_index].setVelocity(
+  size_t my_index = pSender->peerPort() % simulator->people.size();
+  simulator->people[my_index].npc = false;
+  simulator->people[my_index].setVelocity(
       pieces[0].toDouble() * INITIAL_MAX_SPEED * 10, pieces[1].toDouble() * INITIAL_MAX_SPEED * 10);
 }
 //! [processMessage]
@@ -56,7 +57,7 @@ void Server::socketDisconnected() {
   QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
   QTextStream(stdout) << getIdentifier(pClient) << " disconnected!\n";
   if (pClient) {
-    m_clients.removeAll(pClient);
+    clients.removeAll(pClient);
     pClient->deleteLater();
   }
 }

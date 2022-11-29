@@ -16,6 +16,7 @@ class Person {
   enum State state = HEALTHY;
   double infectionTimer = 0;
   size_t cityIndex = 0;
+  bool npc = true;
 
   void setPosition(double x, double y) {
     position[0] = x;

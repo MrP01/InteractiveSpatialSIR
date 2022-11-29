@@ -8,22 +8,18 @@
 #include <vector>
 
 // be careful to set numeric values as floats here
-#define INITIAL_POP_SIZE 120       // initial population size
-#define INITIAL_MAX_SPEED 5        // initial velocity max
-#define BOX_WIDTH 32               // width of the infinitely high box
-#define BOX_HEIGHT 16              // height of the plot
-#define GRAVITY 8.532e1            // 9.81 m/s², actual value in reduced units: 8.532e-05
-#define TAU 8.0e-4                 // time step
-#define VELOCITY_HISTOGRAM_BINS 16 // similarly, number of bins for the velocity histogram
-#define ONE_SECOND 2.1257e-12      // one second in reduced time unit
-#define CITY_FORCE 0               // cities active or not
+#define INITIAL_POP_SIZE 120          // initial population size
+#define INITIAL_MAX_SPEED 5           // initial velocity max
+#define BOX_WIDTH 32                  // width of the infinitely high box
+#define BOX_HEIGHT 20                 // height of the plot
+#define GRAVITY 8.532e1               // 9.81 m/s², actual value in reduced units: 8.532e-05
+#define TAU 4.0e-3                    // time step
+#define VELOCITY_HISTOGRAM_BINS 16    // similarly, number of bins for the velocity histogram
+#define ONE_SECOND 2.1257e-12         // one second in reduced time unit
+#define CITY_INTERACTION 1            // cities active or not
+#define CITY_SWITCH_PROBABILITY 0.004 // probability that a person commutes
 
 #define square(x) (x * x)
-
-#define LJ_CUT_DIST_SQ (LJ_CUTOFF_DISTANCE * LJ_CUTOFF_DISTANCE)
-#define LJ_SIGMA_SQ (LJ_SIGMA * LJ_SIGMA)
-
-// using PersonVectors = double (&)[POPULATION_SIZE][2];
 
 struct VelocityHistogram {
   double min, max;
@@ -46,7 +42,7 @@ struct Log {
 class PersonBox {
  public:
   std::vector<Person> people{};
-  std::vector<struct City> cities{{{2, 2}, 3}, {{12, 9}, 4}, {{2, 25}, 5}};
+  std::vector<struct City> cities{{{4, 2}, 6}, {{27, 9}, 6}, {{10, 18}, 7}};
   struct VelocityHistogram velocityHist;
   double time = 0;
   double totalMeanVelocity = 0;
@@ -59,9 +55,10 @@ class PersonBox {
  public:
   PersonBox() = default;
   void initRandomly();
-  void simulateMovement(size_t timesteps);
+  void simulate(size_t timesteps);
   void reflectPeople();
   void computeVelocityHistogram();
   void exportToCSV();
+  void simulateMovement();
   void simulateInfections();
 };

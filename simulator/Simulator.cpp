@@ -198,8 +198,7 @@ void BoxSimulator::measure() {
 }
 
 void BoxSimulator::step() {
-  simulateMovement(STEPS_PER_FRAME);
-  simulateInfections();
+  simulate(STEPS_PER_FRAME);
   renderPeople();
   _step += STEPS_PER_FRAME;
   if (_step % STEPS_PER_MEASUREMENT == 0)

@@ -5,47 +5,59 @@
 #include <iostream>
 #include <string.h>
 
-void PersonBox::simulateMovement(size_t timesteps) {
+void PersonBox::simulate(size_t timesteps) {
   for (size_t t = 0; t < timesteps; t++) {
-    size_t S = 0, I = 0, R = 0;
-    for (size_t i = 0; i < people.size(); i++) {
-      Person *p = &people[i];
+    simulateMovement();
+    reflectPeople();
+    simulateInfections();
 
-#if CITY_FORCE
+#if CITY_INTERACTION
+    if ((double)rand() / RAND_MAX < CITY_SWITCH_PROBABILITY) {
+      Person *p = &people[rand() % people.size()];
+      p->cityIndex = (p->cityIndex + 1) % cities.size();
+    }
+#endif
+    time += TAU;
+  }
+}
+
+void PersonBox::simulateMovement() {
+  size_t S = 0, I = 0, R = 0;
+  for (size_t i = 0; i < people.size(); i++) {
+    Person *p = &people[i];
+
+    if (CITY_INTERACTION && p->npc) {
       struct City city = cities[p->cityIndex];
       double dx = p->position[0] - city.center[0], dy = p->position[1] - city.center[1];
       double distanceToCity = std::hypot(dx, dy);
       if (distanceToCity > city.radius) { // Person p is outside of the city
-        double urbanForce = 520 * distanceToCity / city.radius;
+        double urbanForce = 420 * distanceToCity / city.radius;
         p->velocity[0] -= urbanForce * dx / distanceToCity * TAU;
         p->velocity[1] -= urbanForce * dy / distanceToCity * TAU;
         // std::cout << "urban force: " << p->velocity[0] << ", " << p->velocity[1] << std::endl;
       } else {
         double totalVelocity = std::hypot(p->velocity[0], p->velocity[1]);
-        p->velocity[0] /= totalVelocity * 0.1;
-        p->velocity[1] /= totalVelocity * 0.1;
-      }
-#endif
-
-      p->position[0] += TAU * p->velocity[0];
-      p->position[1] += TAU * p->velocity[1];
-
-      switch (p->state) {
-      case HEALTHY:
-        S++;
-        break;
-      case INFECTED:
-        I++;
-        break;
-      case RECOVERED:
-        R++;
-        break;
+        p->velocity[0] /= totalVelocity * 0.1 + (double)rand() / RAND_MAX - 0.5;
+        p->velocity[1] /= totalVelocity * 0.1 + (double)rand() / RAND_MAX - 0.5;
       }
     }
-    reflectPeople();
-    logs.push_back({time, S, I, R});
-    time += TAU;
+
+    p->position[0] += TAU * p->velocity[0];
+    p->position[1] += TAU * p->velocity[1];
+
+    switch (p->state) {
+    case HEALTHY:
+      S++;
+      break;
+    case INFECTED:
+      I++;
+      break;
+    case RECOVERED:
+      R++;
+      break;
+    }
   }
+  logs.push_back({time, S, I, R});
 }
 
 void PersonBox::simulateInfections() {
@@ -66,7 +78,7 @@ void PersonBox::simulateInfections() {
       if (distance < 1e-5)
         continue;
 
-      double infectionProbability = 0.8 * exp(-6 * distance);
+      double infectionProbability = 0.4 * exp(-9 * distance);
       // std::cout << infectionProbability << std::endl;
       if ((double)rand() / RAND_MAX < infectionProbability) {
         p->state = INFECTED;
