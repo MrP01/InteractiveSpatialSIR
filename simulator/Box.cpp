@@ -67,8 +67,8 @@ void PersonBox::simulateInfections() {
       if (p->infectionTimer <= 0.03)
         p->state = RECOVERED;
     }
-    // if (p->infectionTimer <= -40)
-    //   p->state = HEALTHY;
+    if (p->infectionTimer <= -40)
+      p->state = HEALTHY;
 
     if (p->state != HEALTHY)
       continue; // Person p is already infected or recovered, no need to check for more

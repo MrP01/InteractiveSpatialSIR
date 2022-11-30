@@ -16,7 +16,7 @@
 #define TAU 4.0e-3                    // time step
 #define VELOCITY_HISTOGRAM_BINS 16    // similarly, number of bins for the velocity histogram
 #define ONE_SECOND 2.1257e-12         // one second in reduced time unit
-#define CITY_INTERACTION 0            // cities active or not
+#define CITY_INTERACTION 1            // cities active or not
 #define CITY_SWITCH_PROBABILITY 0.006 // probability that a person commutes
 
 #define square(x) (x * x)
