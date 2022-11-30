@@ -62,11 +62,13 @@ void PersonBox::simulateMovement() {
 
 void PersonBox::simulateInfections() {
   for (auto p = people.begin(); p < people.end(); p++) {
+    p->infectionTimer -= 0.01;
     if (p->infectionTimer > 0) {
-      p->infectionTimer -= 0.01;
       if (p->infectionTimer <= 0.03)
         p->state = RECOVERED;
     }
+    // if (p->infectionTimer <= -40)
+    //   p->state = HEALTHY;
 
     if (p->state != HEALTHY)
       continue; // Person p is already infected or recovered, no need to check for more
@@ -78,11 +80,12 @@ void PersonBox::simulateInfections() {
       if (distance < 1e-5)
         continue;
 
-      double infectionProbability = 0.4 * exp(-9 * distance);
+      double infectionProbability = 0.1 * exp(-4 * distance);
+      // double infectionProbability = 0.01 / (distance * distance);
       // std::cout << infectionProbability << std::endl;
       if ((double)rand() / RAND_MAX < infectionProbability) {
         p->state = INFECTED;
-        p->infectionTimer = INFECTION_TIMER_MAX;
+        p->infectionTimer = INFECTION_TIMER_MAX * 2 * ((double)rand() / RAND_MAX);
       }
     }
   }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Box.h"
+#include "SimulatorThread.h"
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>

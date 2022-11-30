@@ -212,12 +212,12 @@ void BoxSimulator::setTheme(QChart::ChartTheme theme) {
   velocityHistChart->setTheme(theme);
   personChart->setTheme(theme);
 
-  healthySeries->setColor(Qt::blue);
+  healthySeries->setColor(Qt::green);
   infectedSeries->setColor(Qt::red);
-  recoveredSeries->setColor(Qt::green);
-  numHealthySeries->setColor(Qt::blue);
+  recoveredSeries->setColor(Qt::blue);
+  numHealthySeries->setColor(Qt::green);
   numInfectedSeries->setColor(Qt::red);
-  numRecoveredSeries->setColor(Qt::green);
+  numRecoveredSeries->setColor(Qt::blue);
 }
 
 void BoxSimulator::infectPerson(const QPointF &point) {

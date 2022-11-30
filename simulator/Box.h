@@ -9,15 +9,15 @@
 
 // be careful to set numeric values as floats here
 #define INITIAL_POP_SIZE 120          // initial population size
-#define INITIAL_MAX_SPEED 5           // initial velocity max
+#define INITIAL_MAX_SPEED 12          // initial velocity max
 #define BOX_WIDTH 32                  // width of the infinitely high box
 #define BOX_HEIGHT 20                 // height of the plot
 #define GRAVITY 8.532e1               // 9.81 m/s², actual value in reduced units: 8.532e-05
 #define TAU 4.0e-3                    // time step
 #define VELOCITY_HISTOGRAM_BINS 16    // similarly, number of bins for the velocity histogram
 #define ONE_SECOND 2.1257e-12         // one second in reduced time unit
-#define CITY_INTERACTION 1            // cities active or not
-#define CITY_SWITCH_PROBABILITY 0.004 // probability that a person commutes
+#define CITY_INTERACTION 0            // cities active or not
+#define CITY_SWITCH_PROBABILITY 0.006 // probability that a person commutes
 
 #define square(x) (x * x)
 
